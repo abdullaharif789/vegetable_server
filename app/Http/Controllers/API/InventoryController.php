@@ -15,9 +15,15 @@ class InventoryController extends BaseController
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $inventories = Inventory::all();
+        $inventory=Inventory::with('item');
+        if($request->get("item_id"))
+            $inventories = $inventory->where("item_id",$request->get("item_id"))->get();
+        else if($request->get("now"))
+            $inventories = $inventory->whereDate("created_at",now())->orderby('selling_price')->get();
+        else
+            $inventories = $inventory->orderby('id','desc')->get();
         return $this->sendResponse(InventoryResource::collection($inventories), 'Inventories retrieved successfully.');
     }
     /**
@@ -98,4 +104,5 @@ class InventoryController extends BaseController
    
         return $this->sendResponse([], 'Inventory deleted successfully.');
     }
+
 }

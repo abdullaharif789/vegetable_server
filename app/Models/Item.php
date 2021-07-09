@@ -18,4 +18,8 @@ class Item extends Model
       'name',
       'image'
     ];
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
 }

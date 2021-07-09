@@ -21,7 +21,17 @@ class Inventory extends JsonResource
             'buying_price'=>  $this->buying_price,
             'selling_price'=>  $this->selling_price,
             "date"=> Date('d-M-Y',strtotime($this->stock_date)),
+            'image'=>$this->item->image,
+            'title'=>ucwords($this->item->name),
         ];
         return parent::toArray($request);
     }
 }
+// {
+//   id: 0,
+//   uri: "https://picsum.photos/100",
+//   title: "Brown eggs",
+//   description: "Raw organic brown eggs in a basket.",
+//   price: 120,
+//   quantity: 0,
+// },

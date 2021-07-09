@@ -22,30 +22,31 @@ class RegisterController extends BaseController
         $validator = Validator::make($request->all(), [
             'name' => 'required',
             'email' => 'required|email|unique:users',
-            'username' => 'required|unique:users',
-            'password' => 'required',
-            // 'avatar' =>  'required',
-            // 'business_name' => 'required|unique:parties',
-            // 'address' => 'required',
-            // 'contact_number' => 'required|unique:parties',
+            // 'username' => 'required|unique:users',
+            // 'password' => 'required|min:6',
+            'business_name' => 'required|unique:parties',
+            'address' => 'required',
+            'contact_number' => 'required|unique:parties',
         ]);
         if($validator->fails()){
             return $this->sendError('Validation Error.', $validator->errors());
         }
         $input = $request->all();
-        $input['password'] = bcrypt($input['password']);
+        //here password is 'root' -> in future the password is auto generated and then email.
+        $input['password'] = bcrypt('root');
         $input['name']=strtolower($input['name']);
-        $input['username']=strtolower($input['username']);
+        $input['username']=strtolower(explode('@', $input['email'])[0]);
         $user = User::create($input);
         /*Create Party Object*/
         $input['user_id']=$user->id;
         /*Extra Flieds*/
-        // $input['avatar']=$input['avatar'];
-        // $input['business_name']=$input['business_name'];
-        // $input['address']=$input['address'];
-        // $input['contact_number']=$input['contact_number'];
+        $input['avatar']="https://randomuser.me/api/portraits/men/".rand(1,40).".jpg";
+        $input['business_name']=strtolower($input['business_name']);
+        $input['address']=strtolower($input['address']);
+        $input['contact_number']=$input['contact_number'];
         /*Create Party*/
         $party=Party::create($input);
+        $success['id'] = $party->id;
         $success['token'] =  $user->createToken('Tutoras')->accessToken;
         $success['name'] =  ucwords($user->name);
         $success['username'] =  $user->username;
@@ -71,10 +72,15 @@ class RegisterController extends BaseController
                 $success['name'] =  ucwords($user->name);
                 $success['email'] =  $user->email;
                 $success['username'] =  $user->username;
+                $party =  Party::where('user_id',$user->id)->first();
+                $success['avatar'] = $party->avatar;
+                $success['business_name'] = ucwords($party->business_name);
+                $success['contact_number'] = $party->contact_number;
+                $success['address'] = ucwords($party->address);
                 return $this->sendResponse($success, 'User login successfully.');
             }
             else{
-                return $this->sendError('Unauthorised.', ['error'=>'Unauthorised']);
+                return $this->sendError('Unauthorised.', ['error'=>'Unauthorised.']);
             }
         }
     }

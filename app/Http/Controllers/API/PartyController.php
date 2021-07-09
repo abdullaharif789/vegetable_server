@@ -7,7 +7,7 @@ use App\Http\Controllers\API\BaseController as BaseController;
 use App\Models\Party;
 use Validator;
 use App\Http\Resources\Party as PartyResource;
-   
+use App\Http\Controllers\API\RegisterController;
 class PartyController extends BaseController
 {
     /**
@@ -28,20 +28,7 @@ class PartyController extends BaseController
      */
     public function store(Request $request)
     {
-        $input = $request->all();
-        /*
-        $validator = Validator::make($input, [
-            'name' => 'required',
-            'detail' => 'required'
-        ]);
-       
-        if($validator->fails()){
-            return $this->sendError('Validation Error.', $validator->errors());       
-        }
-        */
-        $party = Party::create($input);
-   
-        return $this->sendResponse(new PartyResource($party), 'Party created successfully.');
+        return (new RegisterController())->register($request);
     } 
    
     /**

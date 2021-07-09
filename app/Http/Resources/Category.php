@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class Item extends JsonResource
+class Category extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -17,9 +17,6 @@ class Item extends JsonResource
         return [
             'id'=>$this->id,
             'name'=>ucwords($this->name),
-            'image'=>$this->image,
-            "added"=> Date('d-M-Y',strtotime($this->created_at)),
-            'category_id'=>$this->category->id
         ];
         return parent::toArray($request);
     }

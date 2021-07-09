@@ -7,6 +7,7 @@ use App\Http\Controllers\API\RegisterController;
 use App\Http\Controllers\API\PartyController; 
 use App\Http\Controllers\API\InventoryController; 
 use App\Http\Controllers\API\ItemController; 
+use App\Http\Controllers\API\CategoryController;
   
 /*
 |--------------------------------------------------------------------------
@@ -18,7 +19,7 @@ use App\Http\Controllers\API\ItemController;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-Route::post('register', [RegisterController::class, 'register'])->name('register');
+// Route::post('register', [RegisterController::class, 'register'])->name('register');
 Route::post('login', [RegisterController::class, 'login'])->name('login');
 Route::post('adminlogin', [RegisterController::class, 'loginadmin'])->name('loginadmin');
 Route::middleware('auth:api')->group( function () {
@@ -26,5 +27,6 @@ Route::middleware('auth:api')->group( function () {
 });
 /*Testing*/
 Route::resource('parties', PartyController::class);
+Route::resource('categories', CategoryController::class);
 Route::resource('inventories', InventoryController::class);
 Route::resource('items', ItemController::class);

@@ -4,11 +4,11 @@ namespace App\Http\Controllers\API;
    
 use Illuminate\Http\Request;
 use App\Http\Controllers\API\BaseController as BaseController;
-use App\Models\Item;
+use App\Models\Category;
 use Validator;
-use App\Http\Resources\Item as ItemResource;
-use File;
-class ItemController extends BaseController
+use App\Http\Resources\Category as CategoryResource;
+   
+class CategoryController extends BaseController
 {
     /**
      * Display a listing of the resource.
@@ -17,8 +17,8 @@ class ItemController extends BaseController
      */
     public function index()
     {
-        $items = Item::with('category')->get();
-        return $this->sendResponse(ItemResource::collection($items), 'Items retrieved successfully.');
+        $categories = Category::all();
+        return $this->sendResponse(CategoryResource::collection($categories), 'Categorys retrieved successfully.');
     }
     /**
      * Store a newly created resource in storage.
@@ -29,20 +29,17 @@ class ItemController extends BaseController
     public function store(Request $request)
     {
         $input = $request->all();
-        return $this->sendResponse($input,'');
         $validator = Validator::make($input, [
             'name' => 'required',
-            'image' => 'required|image'
         ]);
-        //$input['image']=$input['image']['image'];
+       
         if($validator->fails()){
             return $this->sendError('Validation Error.', $validator->errors());       
         }
         $input['name']=strtolower($input['name']);
-        //File::move(public_path($input['image']),public_path('/storage/vegetables/'));
-        return $this->sendResponse($input,'');
-        $item = Item::create($input);
-        return $this->sendResponse(new ItemResource($item), 'Item created successfully.');
+        
+        $category = Category::create($input);
+        return $this->sendResponse(new CategoryResource($category), 'Category created successfully.');
     } 
    
     /**
@@ -53,11 +50,13 @@ class ItemController extends BaseController
      */
     public function show($id)
     {
-        $item = Item::find($id);
-        if (is_null($item)) {
-            return $this->sendError('Item not found.');
+        $category = Category::find($id);
+  
+        if (is_null($category)) {
+            return $this->sendError('Category not found.');
         }
-        return $this->sendResponse(new ItemResource($item), 'Item retrieved successfully.');
+   
+        return $this->sendResponse(new CategoryResource($category), 'Category retrieved successfully.');
     }
     
     /**
@@ -67,24 +66,19 @@ class ItemController extends BaseController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Item $item)
+    public function update(Request $request, Category $category)
     {
         $input = $request->all();
-        /*
         $validator = Validator::make($input, [
             'name' => 'required',
-            'detail' => 'required'
         ]);
         
         if($validator->fails()){
             return $this->sendError('Validation Error.', $validator->errors());       
         }
-        */
-        //$item->name = $input['name'];
-        //$item->detail = $input['detail'];
-        $item->save();
-   
-        return $this->sendResponse(new ItemResource($item), 'Item updated successfully.');
+        $category->name = $input['name'];
+        $category->save();
+        return $this->sendResponse(new CategoryResource($category), 'Category updated successfully.');
     }
    
     /**
@@ -93,10 +87,9 @@ class ItemController extends BaseController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Item $item)
+    public function destroy(Category $category)
     {
-        $item->delete();
-   
-        return $this->sendResponse([], 'Item deleted successfully.');
+        $category->delete();
+        return $this->sendResponse([], 'Category deleted successfully.');
     }
 }
