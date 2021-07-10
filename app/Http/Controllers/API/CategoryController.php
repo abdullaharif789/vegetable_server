@@ -28,6 +28,7 @@ class CategoryController extends BaseController
      */
     public function store(Request $request)
     {
+        $code = $request->get('code')?$request->get('code'):422;
         $input = $request->all();
         $input['name']=strtolower($input['name']);
         $validator = Validator::make($input, [
@@ -35,7 +36,7 @@ class CategoryController extends BaseController
         ]);
        
         if($validator->fails()){
-            return $this->sendError('Validation Error.', $validator->errors());       
+            return $this->sendError('Validation Error.', $validator->errors(),$code);       
         }
                 
         $category = Category::create($input);
