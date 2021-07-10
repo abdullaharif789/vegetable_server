@@ -29,15 +29,15 @@ class CategoryController extends BaseController
     public function store(Request $request)
     {
         $input = $request->all();
+        $input['name']=strtolower($input['name']);
         $validator = Validator::make($input, [
-            'name' => 'required',
+            'name' => 'required|unique:categories',
         ]);
        
         if($validator->fails()){
             return $this->sendError('Validation Error.', $validator->errors());       
         }
-        $input['name']=strtolower($input['name']);
-        
+                
         $category = Category::create($input);
         return $this->sendResponse(new CategoryResource($category), 'Category created successfully.');
     } 
