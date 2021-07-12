@@ -8,6 +8,7 @@ use App\Models\Party;
 use Validator;
 use App\Http\Resources\Party as PartyResource;
 use App\Http\Controllers\API\RegisterController;
+use DB;
 class PartyController extends BaseController
 {
     /**
@@ -58,20 +59,19 @@ class PartyController extends BaseController
     public function update(Request $request, Party $party)
     {
         $input = $request->all();
-        /*
-        $validator = Validator::make($input, [
-            'name' => 'required',
-            'detail' => 'required'
+        $validator = Validator::make($request->all(), [
+            'business_name' => 'required|unique:parties,business_name,'.$party->id,
+            'address' => 'required',
+            'contact_number' => 'required|unique:parties,contact_number,'.$party->id,
         ]);
-        
         if($validator->fails()){
-            return $this->sendError('Validation Error.', $validator->errors());       
+            return $this->sendError('Validation Error.', $validator->errors());
         }
-        */
-        //$party->name = $input['name'];
-        //$party->detail = $input['detail'];
+        /*Extra Flieds*/
+        $party->business_name=strtolower($input['business_name']);
+        $party->address=strtolower($input['address']);
+        $party->contact_number=$input['contact_number'];
         $party->save();
-   
         return $this->sendResponse(new PartyResource($party), 'Party updated successfully.');
     }
    
@@ -83,8 +83,8 @@ class PartyController extends BaseController
      */
     public function destroy(Party $party)
     {
+        DB::table('users')->where('id',$party->user_id)->delete();
         $party->delete();
-   
         return $this->sendResponse([], 'Party deleted successfully.');
     }
 }

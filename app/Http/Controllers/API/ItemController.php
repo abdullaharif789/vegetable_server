@@ -17,7 +17,7 @@ class ItemController extends BaseController
      */
     public function index()
     {
-        $items = Item::with('category')->get();
+        $items = Item::with('category')->orderby('id',"DESC")->get();
         return $this->sendResponse(ItemResource::collection($items), 'Items retrieved successfully.');
     }
     /**
@@ -29,18 +29,15 @@ class ItemController extends BaseController
     public function store(Request $request)
     {
         $input = $request->all();
-        return $this->sendResponse($input,'');
         $validator = Validator::make($input, [
-            'name' => 'required',
-            'image' => 'required|image'
+            'name' => 'required|unique:items',
+            'category_id' => 'required'
         ]);
-        //$input['image']=$input['image']['image'];
         if($validator->fails()){
             return $this->sendError('Validation Error.', $validator->errors());       
         }
         $input['name']=strtolower($input['name']);
-        //File::move(public_path($input['image']),public_path('/storage/vegetables/'));
-        return $this->sendResponse($input,'');
+        $input['image']="https://via.placeholder.com/800/000000/FFF?text=".ucwords($input['name']);
         $item = Item::create($input);
         return $this->sendResponse(new ItemResource($item), 'Item created successfully.');
     } 
@@ -70,20 +67,16 @@ class ItemController extends BaseController
     public function update(Request $request, Item $item)
     {
         $input = $request->all();
-        /*
         $validator = Validator::make($input, [
-            'name' => 'required',
-            'detail' => 'required'
+            'name' => 'required|unique:items,name,'.$item->id,
+            'category_id' => 'required'
         ]);
-        
         if($validator->fails()){
             return $this->sendError('Validation Error.', $validator->errors());       
         }
-        */
-        //$item->name = $input['name'];
-        //$item->detail = $input['detail'];
+        $item->name = $input['name'];
+        $item->category_id = $input['category_id'];
         $item->save();
-   
         return $this->sendResponse(new ItemResource($item), 'Item updated successfully.');
     }
    

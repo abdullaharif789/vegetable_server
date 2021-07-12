@@ -28,7 +28,6 @@ class CategoryController extends BaseController
      */
     public function store(Request $request)
     {
-        $code = $request->get('code')?$request->get('code'):422;
         $input = $request->all();
         $input['name']=strtolower($input['name']);
         $validator = Validator::make($input, [
@@ -36,9 +35,9 @@ class CategoryController extends BaseController
         ]);
        
         if($validator->fails()){
-            return $this->sendError('Validation Error.', $validator->errors(),$code);       
+            return $this->sendError('Validation Error.', $validator->errors());       
         }
-                
+        
         $category = Category::create($input);
         return $this->sendResponse(new CategoryResource($category), 'Category created successfully.');
     } 
@@ -70,14 +69,15 @@ class CategoryController extends BaseController
     public function update(Request $request, Category $category)
     {
         $input = $request->all();
+        $input['name']=strtolower($input['name']);
         $validator = Validator::make($input, [
-            'name' => 'required',
+            'name' => 'required|unique:categories,name,'.$category->id,
         ]);
         
         if($validator->fails()){
             return $this->sendError('Validation Error.', $validator->errors());       
         }
-        $category->name = $input['name'];
+        $category->name=$input['name'];
         $category->save();
         return $this->sendResponse(new CategoryResource($category), 'Category updated successfully.');
     }

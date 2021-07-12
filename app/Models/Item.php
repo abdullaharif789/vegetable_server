@@ -16,7 +16,8 @@ class Item extends Model
      */
     protected $fillable = [
       'name',
-      'image'
+      'image',
+      'category_id'
     ];
     public function category()
     {
