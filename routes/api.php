@@ -7,6 +7,7 @@ use App\Http\Controllers\API\RegisterController;
 use App\Http\Controllers\API\PartyController; 
 use App\Http\Controllers\API\InventoryController; 
 use App\Http\Controllers\API\ItemController; 
+use App\Http\Controllers\API\OrderController; 
 use App\Http\Controllers\API\CategoryController;
   
 /*
@@ -30,3 +31,4 @@ Route::resource('parties', PartyController::class);
 Route::resource('categories', CategoryController::class);
 Route::resource('inventories', InventoryController::class);
 Route::resource('items', ItemController::class);
+Route::resource('orders', OrderController::class);
