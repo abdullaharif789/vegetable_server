@@ -15,9 +15,12 @@ class OrderController extends BaseController
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $orders = Order::orderBy('id','desc')->get();
+        if($request->get("party_id"))
+            $orders = Order::where('party_id',$request->get("party_id"))->orderBy('id','desc')->get();
+        else
+            $orders = Order::orderBy('id','desc')->get();
         return $this->sendResponse(OrderResource::collection($orders), 'Orders retrieved successfully.');
     }
     /**
