@@ -7,7 +7,7 @@ use App\Http\Controllers\API\BaseController as BaseController;
 use App\Models\Inventory;
 use Validator;
 use App\Http\Resources\Inventory as InventoryResource;
-   
+use DB;
 class InventoryController extends BaseController
 {
     /**
@@ -20,10 +20,14 @@ class InventoryController extends BaseController
         $inventory=Inventory::with('item');
         if($request->get("item_id"))
             $inventories = $inventory->where("item_id",$request->get("item_id"))->get();
-        else if($request->get("now"))
-            $inventories = $inventory->whereDate("created_at",now())->orderby('selling_price')->get();
+        else if($request->get("source")=="app"){
+            $inventories=$inventory->whereIn('id', function($query) {
+               $query->from('inventories')->groupBy('item_id')->selectRaw('MAX(id)');
+            })->orderby('selling_price','asc')->get();
+        }
         else
             $inventories = $inventory->orderby('id','desc')->get();
+        // return $inventories;
         return $this->sendResponse(InventoryResource::collection($inventories), 'Inventories retrieved successfully.');
     }
     /**
