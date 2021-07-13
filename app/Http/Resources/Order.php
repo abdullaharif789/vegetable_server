@@ -14,13 +14,13 @@ class Order extends JsonResource
      */
     public function toArray($request)
     {
+        $cart=json_decode($this->cart);
         return [
             'id'=>$this->id,
-            'party'=>[
-                'name'=>ucwords($this->party->name),
-            ],
-            'cart'=>json_decode($this->cart),
-            'total'=>$this->total,
+            'party_id'=>$this->party_id,
+            'cart'=>$cart,
+            'total_items'=>count($cart),
+            'total'=>number_format((float)$this->total, 2, '.', ''),
         ];
         return parent::toArray($request);
     }

@@ -17,7 +17,7 @@ class OrderController extends BaseController
      */
     public function index()
     {
-        $orders = Order::with('party')->get();
+        $orders = Order::get();
         return $this->sendResponse(OrderResource::collection($orders), 'Orders retrieved successfully.');
     }
     /**
@@ -34,9 +34,9 @@ class OrderController extends BaseController
             'cart' => 'required',
             'total' => 'required'
         ]);
-        // if($validator->fails()){
-        //     return $this->sendError('Validation Error.', $validator->errors());       
-        // }
+        if($validator->fails()){
+            return $this->sendError('Validation Error.', $validator->errors());       
+        }
         $order = Order::create($input);
         return $this->sendResponse(new OrderResource($order), 'Order created successfully.');
     } 

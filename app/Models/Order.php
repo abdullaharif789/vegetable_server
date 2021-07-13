@@ -18,6 +18,7 @@ class Order extends Model
         'party_id',
         'cart',
         'total',
+        'status'
     ];
     public function party()
     {
