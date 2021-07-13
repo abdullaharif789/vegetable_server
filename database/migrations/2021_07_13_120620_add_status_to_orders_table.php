@@ -15,7 +15,13 @@ class AddStatusToOrdersTable extends Migration
     {
         Schema::table('orders', function (Blueprint $table) {
             //
-            $table->string("status");
+            // status:
+            // initiated
+            // progress
+            // delivered
+            // completed
+            // cancelled
+            $table->string("status")->default("initiated");
         });
     }
 
