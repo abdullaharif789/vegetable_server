@@ -71,6 +71,7 @@ class RegisterController extends BaseController
                 $success['email'] =  $user->email;
                 $success['username'] =  $user->username;
                 $party =  Party::where('user_id',$user->id)->first();
+                $success['id'] = $party->id;
                 $success['avatar'] = $party->avatar;
                 $success['business_name'] = ucwords($party->business_name);
                 $success['contact_number'] = $party->contact_number;
