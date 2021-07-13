@@ -34,9 +34,9 @@ class OrderController extends BaseController
             'cart' => 'required',
             'total' => 'required'
         ]);
-        if($validator->fails()){
-            return $this->sendError('Validation Error.', $validator->errors());       
-        }
+        // if($validator->fails()){
+        //     return $this->sendError('Validation Error.', $validator->errors());       
+        // }
         $order = Order::create($input);
         return $this->sendResponse(new OrderResource($order), 'Order created successfully.');
     } 
