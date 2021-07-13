@@ -19,7 +19,7 @@ class Order extends JsonResource
             'party'=>[
                 'name'=>ucwords($this->party->name),
             ],
-            'cart'=>json_decode($this->cart)
+            'cart'=>json_decode($this->cart),
             'total'=>$this->total,
         ];
         return parent::toArray($request);
