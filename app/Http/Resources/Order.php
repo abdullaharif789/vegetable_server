@@ -15,12 +15,17 @@ class Order extends JsonResource
     public function toArray($request)
     {
         $cart=json_decode($this->cart);
+        $totalQuantity=0;
+        foreach($cart as $item){
+            $totalQuantity+=$item->quantity;
+        }
         return [
             'id'=>$this->id,
             'party_id'=>$this->party_id,
             'cart'=>$cart,
             'total_items'=>count($cart),
             'total'=>number_format((float)$this->total, 2, '.', ''),
+            'total_quantity'=>$totalQuantity,
         ];
         return parent::toArray($request);
     }
