@@ -17,7 +17,7 @@ class OrderController extends BaseController
      */
     public function index()
     {
-        $orders = Order::get();
+        $orders = Order::orderBy('id','desc')->get();
         return $this->sendResponse(OrderResource::collection($orders), 'Orders retrieved successfully.');
     }
     /**
