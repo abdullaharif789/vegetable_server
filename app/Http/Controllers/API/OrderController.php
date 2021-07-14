@@ -72,20 +72,8 @@ class OrderController extends BaseController
     public function update(Request $request, Order $order)
     {
         $input = $request->all();
-        /*
-        $validator = Validator::make($input, [
-            'name' => 'required',
-            'detail' => 'required'
-        ]);
-        
-        if($validator->fails()){
-            return $this->sendError('Validation Error.', $validator->errors());       
-        }
-        */
-        //$order->name = $input['name'];
-        //$order->detail = $input['detail'];
+        $order->status = strtolower($input['status']);
         $order->save();
-   
         return $this->sendResponse(new OrderResource($order), 'Order updated successfully.');
     }
    
