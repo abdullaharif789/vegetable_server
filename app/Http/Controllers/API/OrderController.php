@@ -19,7 +19,7 @@ class OrderController extends BaseController
     {
         $orders=Order::with('party');
         if($request->get("party_id"))
-            $orders = Order::where('party_id',$request->get("party_id"))->orderBy('id','desc')->get();
+            $orders = Order::where('party_id',$request->get("party_id"))->orderBy('id','desc');
         else{
             if($request->get("filter") || $request->get("sort"))
             {
