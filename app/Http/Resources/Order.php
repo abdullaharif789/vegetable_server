@@ -28,7 +28,7 @@ class Order extends JsonResource
             'total_quantity'=>$totalQuantity,
             'status'=>ucwords($this->status),
             'order_code'=>$this->order_code,
-            'date'=>$this->created_at,
+            'created_at'=>$this->created_at,
         ];
         return parent::toArray($request);
     }

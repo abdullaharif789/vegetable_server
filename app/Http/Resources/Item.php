@@ -18,7 +18,7 @@ class Item extends JsonResource
             'id'=>$this->id,
             'name'=>ucwords($this->name),
             'image'=>$this->image,
-            "added"=> Date('d-M-Y',strtotime($this->created_at)),
+            "added"=> $this->created_at,
             'category_id'=>$this->category->id
         ];
         return parent::toArray($request);

@@ -17,11 +17,31 @@ class OrderController extends BaseController
      */
     public function index(Request $request)
     {
+        $orders=Order::with('party');
         if($request->get("party_id"))
             $orders = Order::where('party_id',$request->get("party_id"))->orderBy('id','desc')->get();
-        else
-            $orders = Order::orderBy('id','desc')->get();
-        return $this->sendResponse(OrderResource::collection($orders), 'Orders retrieved successfully.');
+        else{
+            if($request->get("filter") || $request->get("sort"))
+            {
+                if($request->get("filter")){
+                    $filter=json_decode($request->get("filter"));
+                    if(isset($filter->order_code))
+                        $orders=$orders->where('order_code','like',"%".strtoupper($filter->order_code)."%");
+                    if(isset($filter->created_at))
+                        $orders=$orders->whereDate('created_at',$filter->created_at);
+                    if(isset($filter->status))
+                        $orders=$orders->where('status','like',strtolower($filter->status));
+                }
+                if($request->get("sort"))
+                {
+                    $sort=json_decode($request->get("sort"));
+                    $orders = $orders->orderBy($sort[0],$sort[1]);
+                }
+            }
+            else
+                $orders = Order::orderBy('id','desc');
+        }
+        return $this->sendResponse(OrderResource::collection($orders->get()), 'Orders retrieved successfully.');
     }
     /**
      * Store a newly created resource in storage.
