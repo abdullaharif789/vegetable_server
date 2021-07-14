@@ -27,6 +27,7 @@ class Order extends JsonResource
             'total'=>number_format((float)$this->total, 2, '.', ''),
             'total_quantity'=>$totalQuantity,
             'status'=>ucwords($this->status),
+            'order_code'=>$this->order_code,
         ];
         return parent::toArray($request);
     }

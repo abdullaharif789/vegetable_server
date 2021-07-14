@@ -17,6 +17,7 @@ class OrderController extends BaseController
      */
     public function index(Request $request)
     {
+        return strtoupper(uniqid());
         if($request->get("party_id"))
             $orders = Order::where('party_id',$request->get("party_id"))->orderBy('id','desc')->get();
         else
@@ -40,6 +41,7 @@ class OrderController extends BaseController
         if($validator->fails()){
             return $this->sendError('Validation Error.', $validator->errors());       
         }
+        $input['order_code']=strtoupper(uniqid());
         $order = Order::create($input);
         return $this->sendResponse(new OrderResource($order), 'Order created successfully.');
     } 
