@@ -21,25 +21,19 @@ class OrderController extends BaseController
         if($request->get("party_id"))
             $orders = Order::where('party_id',$request->get("party_id"))->orderBy('id','desc');
         else{
-            if($request->get("filter") || $request->get("sort"))
-            {
-                if($request->get("filter")){
-                    $filter=json_decode($request->get("filter"));
-                    if(isset($filter->order_code))
-                        $orders=$orders->where('order_code','like',"%".strtoupper($filter->order_code)."%");
-                    if(isset($filter->created_at))
-                        $orders=$orders->whereDate('created_at',$filter->created_at);
-                    if(isset($filter->status))
-                        $orders=$orders->where('status','like',strtolower($filter->status));
-                }
-                if($request->get("sort"))
-                {
-                    $sort=json_decode($request->get("sort"));
-                    $orders = $orders->orderBy($sort[0],$sort[1]);
-                }
+            if($request->get("filter")){
+                $filter=json_decode($request->get("filter"));
+                if(isset($filter->order_code))
+                    $orders=$orders->where('order_code','like',"%".strtoupper($filter->order_code)."%");
+                if(isset($filter->created_at))
+                    $orders=$orders->whereDate('created_at',$filter->created_at);
+                if(isset($filter->status))
+                    $orders=$orders->where('status','like',strtolower($filter->status));
             }
-            else
-                $orders = Order::orderBy('id','desc');
+            if($request->get("sort")){
+                $sort=json_decode($request->get("sort"));
+                $orders = $orders->orderBy($sort[0],$sort[1]);
+            }
         }
         return $this->sendResponse(OrderResource::collection($orders->get()), 'Orders retrieved successfully.');
     }
