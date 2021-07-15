@@ -17,18 +17,30 @@ class InventoryController extends BaseController
      */
     public function index(Request $request)
     {
-        $inventory=Inventory::with('item');
+        $inventories=Inventory::with('item');
         if($request->get("item_id"))
-            $inventories = $inventory->where("item_id",$request->get("item_id"))->get();
+            $inventories = $inventories->where("item_id",$request->get("item_id"));
         else if($request->get("source")=="app"){
-            $inventories=$inventory->whereIn('id', function($query) {
+            $inventories=$inventories->whereIn('id', function($query) {
                $query->from('inventories')->groupBy('item_id')->selectRaw('MAX(id)');
-            })->orderby('selling_price','asc')->get();
+            })->orderby('selling_price','asc');
         }
-        else
-            $inventories = $inventory->orderby('id','desc')->get();
-        // return $inventories;
-        return $this->sendResponse(InventoryResource::collection($inventories), 'Inventories retrieved successfully.');
+        else{
+            if($request->get("filter")){
+                $filter=json_decode($request->get("filter"));
+                if(isset($filter->order_code))
+                    $inventories=$inventories->where('order_code','like',"%".strtoupper($filter->order_code)."%");
+                if(isset($filter->created_at))
+                    $inventories=$inventories->whereDate('created_at',$filter->created_at);
+                if(isset($filter->status))
+                    $inventories=$inventories->where('status','like',strtolower($filter->status));
+            }
+            if($request->get("sort")){
+                $sort=json_decode($request->get("sort"));
+                $inventories = $inventories->orderBy($sort[0],$sort[1]);
+            }
+        }
+        return $this->sendResponse(InventoryResource::collection($inventories->get()), 'Inventories retrieved successfully.');
     }
     /**
      * Store a newly created resource in storage.
