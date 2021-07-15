@@ -5,9 +5,10 @@ namespace App\Http\Controllers\API;
 use Illuminate\Http\Request;
 use App\Http\Controllers\API\BaseController as BaseController;
 use App\Models\Order;
+use App\Models\Invoice;
 use Validator;
 use App\Http\Resources\Order as OrderResource;
-   
+use DB;   
 class OrderController extends BaseController
 {
     /**
@@ -86,7 +87,19 @@ class OrderController extends BaseController
     public function update(Request $request, Order $order)
     {
         $input = $request->all();
+        $validator = Validator::make($input, [
+            'status' => 'required',
+        ]);
+        if($validator->fails()){
+            return $this->sendError('Validation Error.', $validator->errors());       
+        }
         $order->status = strtolower($input['status']);
+        // Here we create invoice after order is completed
+        if(strtolower($input['status'])=="completed"){
+            $input['order_id']=$order->id;
+            $input['order_code']=strtoupper($order->order_code);
+            $invoice = Invoice::create($input);
+        }
         $order->save();
         return $this->sendResponse(new OrderResource($order), 'Order updated successfully.');
     }
@@ -99,8 +112,7 @@ class OrderController extends BaseController
      */
     public function destroy(Order $order)
     {
-        $order->delete();
-   
+        DB::table("orders")->where('id',$order->id)->update(['status'=>'cancelled']);
         return $this->sendResponse([], 'Order deleted successfully.');
     }
 }

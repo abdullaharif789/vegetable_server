@@ -16,10 +16,16 @@ class PartyController extends BaseController
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $parties = Party::with('user')->get();
-        return $this->sendResponse(PartyResource::collection($parties), 'Partys retrieved successfully.');
+        $parties = Party::with('user');
+        if($request->get('filter')){
+            $filter=json_decode($request->get("filter"));
+            if(isset($filter->id)){
+                $parties=$parties->whereIn('id',$filter->id);
+            }
+        }
+        return $this->sendResponse(PartyResource::collection($parties->get()), 'Partys retrieved successfully.');
     }
     /**
      * Store a newly created resource in storage.
