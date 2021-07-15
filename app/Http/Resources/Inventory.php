@@ -20,7 +20,7 @@ class Inventory extends JsonResource
             'unit'=> $this->unit,
             'buying_price'=>  $this->buying_price,
             'selling_price'=>  $this->selling_price,
-            "date"=> Date('d-M-Y',strtotime($this->stock_date)),
+            "date"=> $this->stock_date,
             'image'=>$this->item->image,
             'title'=>ucwords($this->item->name),
         ];
