@@ -31,7 +31,7 @@ class InventoryController extends BaseController
                 if(isset($filter->order_code))
                     $inventories=$inventories->where('order_code','like',"%".strtoupper($filter->order_code)."%");
                 if(isset($filter->created_at))
-                    $inventories=$inventories->whereDate('created_at',$filter->created_at);
+                    $inventories=$inventories->whereDate('stock_date',$filter->created_at);
                 if(isset($filter->status))
                     $inventories=$inventories->where('status','like',strtolower($filter->status));
             }
