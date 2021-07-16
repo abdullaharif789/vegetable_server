@@ -38,6 +38,11 @@ class OrderController extends BaseController
         }
         return $this->sendResponse(OrderResource::collection($orders->get()), 'Orders retrieved successfully.');
     }
+    public function reports()
+    {
+        $orders=Order::with('party');
+        return $this->sendResponse(OrderResource::collection($orders->get()), 'Orders retrieved successfully.');
+    }
     /**
      * Store a newly created resource in storage.
      *
@@ -115,4 +120,5 @@ class OrderController extends BaseController
         DB::table("orders")->where('id',$order->id)->update(['status'=>'cancelled']);
         return $this->sendResponse([], 'Order deleted successfully.');
     }
+    
 }
