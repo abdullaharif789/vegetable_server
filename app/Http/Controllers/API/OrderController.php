@@ -40,7 +40,7 @@ class OrderController extends BaseController
     }
     public function reports(Request $request)
     {
-        $reports=Order::with('party');
+        $reports=Order::with('party')->where("status","completed");
         if($request->get("filter")){
             $filter=json_decode($request->get("filter"));
             if(isset($filter->start_date) || isset($filter->end_date)){
