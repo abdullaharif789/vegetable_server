@@ -38,10 +38,25 @@ class OrderController extends BaseController
         }
         return $this->sendResponse(OrderResource::collection($orders->get()), 'Orders retrieved successfully.');
     }
-    public function reports()
+    public function reports(Request $request)
     {
-        $orders=Order::with('party');
-        return $this->sendResponse(OrderResource::collection($orders->get()), 'Orders retrieved successfully.');
+        $reports=Order::with('party');
+        if($request->get("filter")){
+            $filter=json_decode($request->get("filter"));
+            if(isset($filter->start_date) || isset($filter->end_date)){
+                $from=isset($filter->start_date)?date($filter->start_date):date('1990-01-01');
+                $to=isset($filter->end_date)?date($filter->end_date):date('2099-01-01');
+                $reports=$reports->whereDate('created_at','<=',$to)->whereDate('created_at','>=',$from);
+            }
+            if(isset($filter->party_id))
+                $reports=$reports->where('party_id',$filter->party_id);
+        }
+        if($request->get("sort")){
+            $sort=json_decode($request->get("sort"));
+            $reports = $reports->orderBy($sort[0],$sort[1]);
+        }
+        $reports=$reports->get();
+        return $this->sendResponse(OrderResource::collection($reports), 'Orders retrieved successfully.');
     }
     /**
      * Store a newly created resource in storage.

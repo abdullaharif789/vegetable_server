@@ -22,8 +22,11 @@ class InvoiceController extends BaseController
             $filter=json_decode($request->get("filter"));
             if(isset($filter->order_code))
                 $invoices=$invoices->where('order_code','like',"%".strtoupper($filter->order_code)."%");
-            if(isset($filter->start_date) && isset($filter->end_date))
-                $invoices=$invoices->whereBetween('created_at',[date($filter->start_date),date($filter->end_date)]);
+            if(isset($filter->start_date) || isset($filter->end_date)){
+                $from=isset($filter->start_date)?date($filter->start_date):date('1990-01-01');
+                $to=isset($filter->end_date)?date($filter->end_date):date('2099-01-01');
+                $invoices=$invoices->whereDate('created_at','<=',$to)->whereDate('created_at','>=',$from);
+            }
         }
         if($request->get("sort")){
             $sort=json_decode($request->get("sort"));
