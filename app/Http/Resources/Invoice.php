@@ -29,6 +29,7 @@ class Invoice extends JsonResource
                 'status' => $this->order->status,
                 'order_code'=>$this->order->order_code,
                 'total'=>number_format((float)$this->order->total, 2, '.', ''),
+                'total_tax'=>number_format((float)$this->order->total_tax, 2, '.', ''),
                 'party_id'=>$this->order->party_id,
                 'total_items'=>count($cart),
                 'total_quantity'=>$totalQuantity,
