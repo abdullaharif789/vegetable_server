@@ -14,12 +14,14 @@ class Inventory extends JsonResource
      */
     public function toArray($request)
     {
+        $tax=20.00;
          return [
             "id"=> $this->id,
             "item_id"=> $this->item_id,
             'unit'=> $this->unit,
             'buying_price'=>  $this->buying_price,
             'selling_price'=>  $this->selling_price,
+            'tax'=>  $this->selling_price+($this->selling_price/100*$tax),
             "date"=> $this->stock_date,
             'image'=>$this->item->image,
             'title'=>ucwords($this->item->name),
