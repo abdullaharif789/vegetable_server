@@ -70,7 +70,7 @@ class OrderController extends BaseController
         $validator = Validator::make($input, [
             'party_id' => 'required',
             'cart' => 'required',
-            'total' => 'required'
+            'total' => 'required',
             'total_tax' => 'required'
         ]);
         if($validator->fails()){
