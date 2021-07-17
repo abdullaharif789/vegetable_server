@@ -25,6 +25,7 @@ class Order extends JsonResource
             'cart'=>$cart,
             'total_items'=>count($cart),
             'total'=>number_format((float)$this->total, 2, '.', ''),
+            'total_tax'=>number_format((float)$this->total_tax, 2, '.', ''),
             'total_quantity'=>$totalQuantity,
             'status'=>ucwords($this->status),
             'order_code'=>$this->order_code,

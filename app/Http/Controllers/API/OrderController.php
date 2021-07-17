@@ -71,6 +71,7 @@ class OrderController extends BaseController
             'party_id' => 'required',
             'cart' => 'required',
             'total' => 'required'
+            'total_tax' => 'required'
         ]);
         if($validator->fails()){
             return $this->sendError('Validation Error.', $validator->errors());       
