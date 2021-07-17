@@ -8,6 +8,7 @@ use App\Models\Order;
 use App\Models\Invoice;
 use Validator;
 use App\Http\Resources\Order as OrderResource;
+use App\Http\Resources\Report as ReportResource;
 use DB;   
 class OrderController extends BaseController
 {
@@ -56,7 +57,7 @@ class OrderController extends BaseController
             $reports = $reports->orderBy($sort[0],$sort[1]);
         }
         $reports=$reports->get();
-        return $this->sendResponse(OrderResource::collection($reports), 'Orders retrieved successfully.');
+        return $this->sendResponse(ReportResource::collection($reports), 'Orders retrieved successfully.');
     }
     /**
      * Store a newly created resource in storage.
