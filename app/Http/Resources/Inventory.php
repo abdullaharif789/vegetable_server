@@ -21,7 +21,7 @@ class Inventory extends JsonResource
             'unit'=> $this->unit,
             'buying_price'=>  $this->buying_price,
             'selling_price'=>  $this->selling_price,
-            'tax'=>  $this->selling_price+($this->selling_price/100*$tax),
+            'tax'=>  $this->selling_price/100*$tax,
             "date"=> $this->stock_date,
             'image'=>$this->item->image,
             'title'=>ucwords($this->item->name),
