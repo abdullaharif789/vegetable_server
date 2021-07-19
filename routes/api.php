@@ -23,6 +23,7 @@ use App\Http\Controllers\API\CategoryController;
 */
 // Route::post('register', [RegisterController::class, 'register'])->name('register');
 Route::post('login', [RegisterController::class, 'login'])->name('login');
+Route::post('validate', [RegisterController::class, 'validateToken'])->name('validate');
 Route::post('adminlogin', [RegisterController::class, 'loginadmin'])->name('loginadmin');
 Route::middleware('auth:api')->group( function () {
 	Route::get('logout','App\Http\Controllers\API\RegisterController@logout');

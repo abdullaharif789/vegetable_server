@@ -8,7 +8,7 @@ use App\Models\User;
 use App\Models\Party;
 use Illuminate\Support\Facades\Auth;
 use Validator;
-
+use DB;
 class RegisterController extends BaseController
 {
     /**
@@ -46,7 +46,7 @@ class RegisterController extends BaseController
         /*Create Party*/
         $party=Party::create($input);
         $success['id'] = $party->id;
-        $success['token'] =  $user->createToken('Tutoras')->accessToken;
+        $success['token'] =  $user->createToken('EveryDayFrehFood')->accessToken;
         $success['name'] =  ucwords($user->name);
         $success['username'] =  $user->username;
         $success['email'] =  $user->email;
@@ -67,7 +67,9 @@ class RegisterController extends BaseController
         else{
             if(Auth::attempt(['username' => $request->username,'password' => $request->password])){
                 $user = Auth::user();
-                $success['token'] =  $user->createToken('Tutoras')->accessToken;
+                $token=$user->createToken('EveryDayFrehFood');
+                $success['token'] =  $token->accessToken;
+                $success['token_id'] =  $token->token->id;
                 $success['name'] =  ucwords($user->name);
                 $success['email'] =  $user->email;
                 $success['username'] =  $user->username;
@@ -84,13 +86,22 @@ class RegisterController extends BaseController
             }
         }
     }
+    public function validateToken(Request $request)
+    {
+        $token=$request->token;
+        $token=DB::table("oauth_access_tokens")->where('id',$token)->get();
+        if(count($token)>0)
+            return $this->sendResponse(true,"");
+        else
+            return $this->sendResponse(false,"");   
+    }
     public function loginadmin(Request $request)
     {
         if($request->username==$this->adminUsername)
         {
             if(Auth::attempt(['username' => $request->username,'password' => $request->password])){
                 $user = Auth::user();
-                $success['token'] =  $user->createToken('Tutoras')->accessToken;
+                $success['token'] =  $user->createToken('EveryDayFrehFood')->accessToken;
                 $success['name'] =  ucwords($user->name);
                 $success['username'] =  $user->username;
                 $success['email'] =  $user->email;
