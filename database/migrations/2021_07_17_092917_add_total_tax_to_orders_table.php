@@ -15,7 +15,7 @@ class AddTotalTaxToOrdersTable extends Migration
     {
         Schema::table('orders', function (Blueprint $table) {
             //
-            $table->float('total_tax')->defailt(0);
+            $table->float('total_tax')->default(0);
         });
     }
 

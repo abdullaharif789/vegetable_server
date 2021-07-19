@@ -118,9 +118,9 @@ class OrderController extends BaseController
         $order->status = strtolower($input['status']);
         // Here we create invoice after order is completed
         if(strtolower($input['status'])=="completed"){
-            $input['order_id']=$order->id;
-            $input['order_code']=strtoupper($order->order_code);
-            $invoice = Invoice::create($input);
+            $output['order_id']=$order->id;
+            $output['order_code']=strtoupper($order->order_code);
+            $invoice = Invoice::firstOrCreate($output);
         }
         $order->save();
         return $this->sendResponse(new OrderResource($order), 'Order updated successfully.');

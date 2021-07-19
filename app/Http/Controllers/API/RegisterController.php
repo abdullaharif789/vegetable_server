@@ -29,6 +29,7 @@ class RegisterController extends BaseController
         if($validator->fails()){
             return $this->sendError('Validation Error.', $validator->errors());
         }
+
         $input = $request->all();
         //here password is 'root' -> in future the password is auto generated and then email.
         $input['password'] = bcrypt('root');
