@@ -21,7 +21,7 @@ class AddStatusToOrdersTable extends Migration
             // delivered
             // completed
             // cancelled
-            $table->string("status")->default("initiated");
+            $table->string("status")->default("progress");
             $table->string("order_code");
         });
     }

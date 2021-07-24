@@ -25,6 +25,7 @@ class Inventory extends JsonResource
             "date"=> $this->stock_date,
             'image'=>$this->item->image,
             'title'=>ucwords($this->item->name),
+            'active'=>$this->active
         ];
         return parent::toArray($request);
     }

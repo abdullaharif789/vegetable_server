@@ -34,13 +34,25 @@ class InventoryController extends BaseController
                     $inventories=$inventories->whereDate('stock_date',$filter->created_at);
                 if(isset($filter->status))
                     $inventories=$inventories->where('status','like',strtolower($filter->status));
+                if(isset($filter->item_id))
+                    $inventories=$inventories->where('item_id',$filter->item_id);
             }
             if($request->get("sort")){
                 $sort=json_decode($request->get("sort"));
                 $inventories = $inventories->orderBy($sort[0],$sort[1]);
             }
         }
-        return $this->sendResponse(InventoryResource::collection($inventories->get()), 'Inventories retrieved successfully.');
+        //Manage Active App Chips
+        $inventories=$inventories->get();
+        $tempIds=[];
+        $activeIds=Inventory::with('item')->whereIn('id', function($query) {
+               $query->from('inventories')->groupBy('item_id')->selectRaw('MAX(id)');
+            })->select('id')->get();
+        for($i=0;$i<count($inventories);$i++){
+            if($this->arraySearch($inventories[$i]->id,$activeIds)) $inventories[$i]->active=true;
+            else $inventories[$i]->active=false;
+        }
+        return $this->sendResponse(InventoryResource::collection($inventories), 'Inventories retrieved successfully.');
     }
     /**
      * Store a newly created resource in storage.
@@ -91,20 +103,8 @@ class InventoryController extends BaseController
     public function update(Request $request, Inventory $inventory)
     {
         $input = $request->all();
-        /*
-        $validator = Validator::make($input, [
-            'name' => 'required',
-            'detail' => 'required'
-        ]);
-        
-        if($validator->fails()){
-            return $this->sendError('Validation Error.', $validator->errors());       
-        }
-        */
-        //$inventory->name = $input['name'];
-        //$inventory->detail = $input['detail'];
+        $inventory->selling_price=(float)$input['selling_price'];
         $inventory->save();
-   
         return $this->sendResponse(new InventoryResource($inventory), 'Inventory updated successfully.');
     }
    
@@ -120,5 +120,4 @@ class InventoryController extends BaseController
    
         return $this->sendResponse([], 'Inventory deleted successfully.');
     }
-
 }

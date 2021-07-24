@@ -39,4 +39,10 @@ class BaseController extends Controller
         else
             return response()->json($error, $code);
     }
+    protected function arraySearch($toBeSearch,$array){
+        foreach($array as $item){
+            if($item->id==$toBeSearch) return true;
+        }
+        return false;
+    }
 }
