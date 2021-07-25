@@ -35,4 +35,5 @@ Route::resource('inventories', InventoryController::class);
 Route::resource('items', ItemController::class);
 Route::resource('invoices', InvoiceController::class);
 Route::resource('orders', OrderController::class);
-Route::get('reports', [OrderController::class, 'reports']);
+Route::get('order_reports', [OrderController::class, 'order_reports']);
+Route::get('inventory_reports', [InventoryController::class, 'index']);

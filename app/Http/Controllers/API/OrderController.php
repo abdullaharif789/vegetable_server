@@ -39,7 +39,7 @@ class OrderController extends BaseController
         }
         return $this->sendResponse(OrderResource::collection($orders->get()), 'Orders retrieved successfully.');
     }
-    public function reports(Request $request)
+    public function order_reports(Request $request)
     {
         $reports=Order::with('party')->where("status","completed");
         if($request->get("filter")){
@@ -67,7 +67,8 @@ class OrderController extends BaseController
      */
     public function store(Request $request)
     {
-        $input = $request->all();
+
+        $input = $request->all();        
         $validator = Validator::make($input, [
             'party_id' => 'required',
             'cart' => 'required',
@@ -77,6 +78,7 @@ class OrderController extends BaseController
         if($validator->fails()){
             return $this->sendError('Validation Error.', $validator->errors());       
         }
+        $input['cart']=json_encode($input['cart']);
         $input['order_code']=strtoupper(uniqid());
         $order = Order::create($input);
         return $this->sendResponse(new OrderResource($order), 'Order created successfully.');
@@ -118,9 +120,16 @@ class OrderController extends BaseController
         $order->status = strtolower($input['status']);
         // Here we create invoice after order is completed
         if(strtolower($input['status'])=="completed"){
-            $output['order_id']=$order->id;
-            $output['order_code']=strtoupper($order->order_code);
-            $invoice = Invoice::firstOrCreate($output);
+            $invoice=Invoice::where('order_id',$order->id)->get();
+            if(count($invoice)==0){
+                //Decrement Quantites
+                foreach(json_decode($order->cart) as $item){
+                    DB::table('inventories')->where('id',$item->inventory_id)->decrement('remaining_unit',$item->quantity);
+                }
+                $output['order_id']=$order->id;
+                $output['order_code']=strtoupper($order->order_code);
+                $invoice = Invoice::create($output);
+            }
         }
         $order->save();
         return $this->sendResponse(new OrderResource($order), 'Order updated successfully.');

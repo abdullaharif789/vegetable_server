@@ -20,6 +20,7 @@ class Inventory extends Model
         'buying_price',
         'selling_price',
         'stock_date',
+        'remaining_unit'
     ];
     public function item()
     {

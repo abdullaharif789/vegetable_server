@@ -32,6 +32,11 @@ class InventoryController extends BaseController
                     $inventories=$inventories->where('order_code','like',"%".strtoupper($filter->order_code)."%");
                 if(isset($filter->created_at))
                     $inventories=$inventories->whereDate('stock_date',$filter->created_at);
+                 if(isset($filter->start_date) || isset($filter->end_date)){
+                    $from=isset($filter->start_date)?date($filter->start_date):date('1990-01-01');
+                    $to=isset($filter->end_date)?date($filter->end_date):date('2099-01-01');
+                    $inventories=$inventories->whereDate('created_at','<=',$to)->whereDate('created_at','>=',$from);
+                }
                 if(isset($filter->status))
                     $inventories=$inventories->where('status','like',strtolower($filter->status));
                 if(isset($filter->item_id))
@@ -104,6 +109,8 @@ class InventoryController extends BaseController
     {
         $input = $request->all();
         $inventory->selling_price=(float)$input['selling_price'];
+        $inventory->unit=(integer)$input['unit'];
+        $inventory->item_id=$input['item_id'];
         $inventory->save();
         return $this->sendResponse(new InventoryResource($inventory), 'Inventory updated successfully.');
     }
