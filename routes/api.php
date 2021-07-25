@@ -28,7 +28,6 @@ Route::post('adminlogin', [RegisterController::class, 'loginadmin'])->name('logi
 Route::middleware('auth:api')->group( function () {
 	Route::get('logout','App\Http\Controllers\API\RegisterController@logout');
 });
-/*Testing*/
 Route::resource('parties', PartyController::class);
 Route::resource('categories', CategoryController::class);
 Route::resource('inventories', InventoryController::class);

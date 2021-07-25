@@ -101,7 +101,9 @@ class RegisterController extends BaseController
         {
             if(Auth::attempt(['username' => $request->username,'password' => $request->password])){
                 $user = Auth::user();
-                $success['token'] =  $user->createToken('EveryDayFrehFood')->accessToken;
+                $token=$user->createToken('EveryDayFrehFood');
+                $success['token'] =  $token->accessToken;
+                $success['token_id'] =  $token->token->id;
                 $success['name'] =  ucwords($user->name);
                 $success['username'] =  $user->username;
                 $success['email'] =  $user->email;

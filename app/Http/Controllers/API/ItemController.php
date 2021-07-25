@@ -37,6 +37,7 @@ class ItemController extends BaseController
             return $this->sendError('Validation Error.', $validator->errors());       
         }
         $input['name']=strtolower($input['name']);
+        $input['tax']=isset($input['tax'])&&$input['tax']=="yes"?1:0;
         $input['image']="https://via.placeholder.com/800/000000/FFF?text=".ucwords($input['name']);
         $item = Item::create($input);
         return $this->sendResponse(new ItemResource($item), 'Item created successfully.');
@@ -75,6 +76,7 @@ class ItemController extends BaseController
             return $this->sendError('Validation Error.', $validator->errors());       
         }
         $item->name = $input['name'];
+        $item->tax=isset($input['tax'])&&$input['tax']=="yes"?1:0;
         $item->category_id = $input['category_id'];
         $item->save();
         return $this->sendResponse(new ItemResource($item), 'Item updated successfully.');

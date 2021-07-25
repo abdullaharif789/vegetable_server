@@ -19,7 +19,9 @@ class Item extends JsonResource
             'name'=>ucwords($this->name),
             'image'=>$this->image,
             "added"=> $this->created_at,
-            'category_id'=>$this->category->id
+            'category_id'=>$this->category->id,
+            'tax'=>$this->tax?"yes":"no",
+            'tax_boolean'=>$this->tax?true:false
         ];
         return parent::toArray($request);
     }
