@@ -44,6 +44,8 @@ class OrderController extends BaseController
         $reports=Order::with('party')->where("status","completed");
         if($request->get("filter")){
             $filter=json_decode($request->get("filter"));
+            if(isset($filter->order_code))
+                $reports=$reports->where('order_code','like',"%".strtoupper($filter->order_code)."%");
             if(isset($filter->start_date) || isset($filter->end_date)){
                 $from=isset($filter->start_date)?date($filter->start_date):date('1990-01-01');
                 $to=isset($filter->end_date)?date($filter->end_date):date('2099-01-01');
@@ -57,7 +59,8 @@ class OrderController extends BaseController
             $reports = $reports->orderBy($sort[0],$sort[1]);
         }
         $reports=$reports->get();
-        return $this->sendResponse(ReportResource::collection($reports), 'Orders retrieved successfully.');
+        $reports=ReportResource::collection($reports);
+        return $this->sendResponse($reports, 'Orders retrieved successfully.');
     }
     /**
      * Store a newly created resource in storage.
