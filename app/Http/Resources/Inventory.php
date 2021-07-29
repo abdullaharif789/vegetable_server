@@ -15,7 +15,7 @@ class Inventory extends JsonResource
     public function toArray($request)
     {
         $tax=20.00;
-         return [
+        return [
             "id"=> $this->id,
             "item_id"=> $this->item_id,
             "title"=> ucwords($this->item->title),
@@ -25,7 +25,7 @@ class Inventory extends JsonResource
             'selling_price'=>  $this->selling_price,
             'tax'=> $this->item->tax?$this->selling_price/100*$tax:0,
             "date"=> $this->stock_date,
-            'image'=>$this->item->image,
+            'image'=>asset("storage/items/".$this->item->image),
             'title'=>ucwords($this->item->name),
             'active'=>$this->active,
             'tax_available'=>$this->item->tax?true:false
