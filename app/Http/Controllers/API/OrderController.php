@@ -39,6 +39,24 @@ class OrderController extends BaseController
         }
         return $this->sendResponse(OrderResource::collection($orders->get()), 'Orders retrieved successfully.');
     }
+    public function manual_orders(Request $request)
+    {
+        $orders=Order::with('party')->where('manual',1);
+        if($request->get("filter")){
+            $filter=json_decode($request->get("filter"));
+            if(isset($filter->order_code))
+                $orders=$orders->where('order_code','like',"%".strtoupper($filter->order_code)."%");
+            if(isset($filter->created_at))
+                $orders=$orders->whereDate('created_at',$filter->created_at);
+            if(isset($filter->status))
+                $orders=$orders->where('status','like',strtolower($filter->status));
+        }
+        if($request->get("sort")){
+            $sort=json_decode($request->get("sort"));
+            $orders = $orders->orderBy($sort[0],$sort[1]);
+        }
+        return $this->sendResponse(OrderResource::collection($orders->get()), 'Orders retrieved successfully.');
+    }
     public function order_reports(Request $request)
     {
         $reports=Order::with('party')->where("status","completed");
@@ -81,6 +99,8 @@ class OrderController extends BaseController
         if($validator->fails()){
             return $this->sendError('Validation Error.', $validator->errors());       
         }
+        // $input['status']=isset($input['status'])?$input['status']:"progress";
+        $input['manual']=isset($input['manual'])?true:false;
         $input['cart']=json_encode($input['cart']);
         $input['order_code']=strtoupper(uniqid());
         $order = Order::create($input);

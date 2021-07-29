@@ -30,6 +30,7 @@ class Order extends JsonResource
             'status'=>ucwords($this->status),
             'order_code'=>$this->order_code,
             'created_at'=>$this->created_at,
+            'order_from'=>$this->manual?'Manual':"App",
         ];
         return parent::toArray($request);
     }

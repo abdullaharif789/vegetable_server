@@ -18,6 +18,7 @@ class Inventory extends JsonResource
          return [
             "id"=> $this->id,
             "item_id"=> $this->item_id,
+            "title"=> ucwords($this->item->title),
             'unit'=> $this->unit,
             'remaining_unit'=> $this->remaining_unit,
             'buying_price'=>  $this->buying_price,

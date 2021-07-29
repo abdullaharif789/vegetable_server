@@ -20,7 +20,8 @@ class Order extends Model
         'total',
         'status',
         'order_code',
-        'total_tax'
+        'total_tax',
+        'manual'
     ];
     public function party()
     {
