@@ -20,8 +20,6 @@ class MailController extends Controller {
             $message->to($this->to, $this->name)->subject('Congratulations! for joining '.$this->company.' 👏');
             $message->from($this->from,$this->company);
         });
-        var_dump($mail);
-        echo "Email Sent";
     }
     public function test(){
         $this->send_email("Abdullah Arif","abdullaharif789@gmail.com","root");
