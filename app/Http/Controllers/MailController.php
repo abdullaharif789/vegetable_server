@@ -16,10 +16,11 @@ class MailController extends Controller {
         $this->to=$to;
         $this->name=$name;
         $data = array('name'=>$this->name,'email'=>$to,'password'=>$password);
-        Mail::send('mail', $data, function($message) {
+        $mail=Mail::send('mail', $data, function($message) {
             $message->to($this->to, $this->name)->subject('Congratulations! for joining '.$this->company.' 👏');
             $message->from($this->from,$this->company);
         });
+        var_dump($mail);
         echo "Email Sent";
     }
     public function test(){
