@@ -9,6 +9,7 @@ use App\Models\Party;
 use Illuminate\Support\Facades\Auth;
 use Validator;
 use DB;
+use Hash;
 class RegisterController extends BaseController
 {
     /**
@@ -88,15 +89,15 @@ class RegisterController extends BaseController
     }
     public function change_password(Request $request)
     {
-        if(!isset($request->password) || !isset($request->confirmPassword))
+        if(!isset($request->password) || !isset($request->confirmPassword) || !isset($request->id))
         {
-           return $this->sendError('Pass both passwords.', ['error'=>'Pass both passwords.'],422);
+           return $this->sendError('Pass all parameters.', ['error'=>'Pass all parameters.'],422);
         }
         else{
             if($request->password!=$request->confirmPassword){
                 return $this->sendError('Pass should be same.', ['error'=>'Pass should be same.'],422);
             }
-            return "A".Auth::user();
+            User::find($request->id)->update(['password'=> Hash::make($request->password)]);
             return $this->sendResponse('Password changed.', 'Password changed.');
         }
     }
@@ -121,6 +122,7 @@ class RegisterController extends BaseController
                 $success['name'] =  ucwords($user->name);
                 $success['username'] =  $user->username;
                 $success['email'] =  $user->email;
+                $success['user_id'] =  $user->id;
                 return $this->sendResponse($success, 'Admin login successfully.');
             }
             else{
