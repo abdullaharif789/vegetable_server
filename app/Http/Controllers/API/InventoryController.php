@@ -25,6 +25,9 @@ class InventoryController extends BaseController
                $query->from('inventories')->groupBy('item_id')->selectRaw('MAX(id)');
             })->orderby('selling_price','asc');
         }
+        else if($request->get("available")=="true"){
+            $inventories=$inventories->where('remaining_unit','>',0);
+        }
         else{
             if($request->get("filter")){
                 $filter=json_decode($request->get("filter"));
@@ -77,6 +80,7 @@ class InventoryController extends BaseController
         if($validator->fails()){
             return $this->sendError('Validation Error.', $validator->errors());       
         }
+        $input['remaining_unit']=$input['unit'];
         $inventory = Inventory::create($input);
         return $this->sendResponse(new InventoryResource($inventory), 'Inventory created successfully.');
     } 

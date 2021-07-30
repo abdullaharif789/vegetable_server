@@ -86,6 +86,20 @@ class RegisterController extends BaseController
             }
         }
     }
+    public function change_password(Request $request)
+    {
+        if(!isset($request->password) || !isset($request->confirmPassword))
+        {
+           return $this->sendError('Pass both passwords.', ['error'=>'Pass both passwords.'],422);
+        }
+        else{
+            if($request->password!=$request->confirmPassword){
+                return $this->sendError('Pass should be same.', ['error'=>'Pass should be same.'],422);
+            }
+            return "A".Auth::user();
+            return $this->sendResponse('Password changed.', 'Password changed.');
+        }
+    }
     public function validateToken(Request $request)
     {
         $token=$request->token;
