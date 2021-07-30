@@ -21,7 +21,7 @@ class InventoryController extends BaseController
         if($request->get("item_id"))
             $inventories = $inventories->where("item_id",$request->get("item_id"));
         else if($request->get("source")=="app"){
-            $inventories=$inventories->whereIn('id', function($query) {
+            $inventories=$inventories->where('remaining_unit','>',0)->whereIn('id', function($query) {
                $query->from('inventories')->groupBy('item_id')->selectRaw('MAX(id)');
             })->orderby('selling_price','asc');
         }
