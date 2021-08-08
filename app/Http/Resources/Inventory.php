@@ -3,7 +3,7 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
-
+use DB;
 class Inventory extends JsonResource
 {
     /**
@@ -14,7 +14,9 @@ class Inventory extends JsonResource
      */
     public function toArray($request)
     {
+
         $tax=20.00;
+        $category_title=DB::table("categories")->select('name')->where('id',$this->item->category_id)->first()->name;
         return [
             "id"=> $this->id,
             "item_id"=> $this->item_id,
@@ -28,7 +30,9 @@ class Inventory extends JsonResource
             'image'=>asset("storage/items/".$this->item->image),
             'title'=>ucwords($this->item->name),
             'active'=>$this->active,
-            'tax_available'=>$this->item->tax?true:false
+            'tax_available'=>$this->item->tax?true:false,
+            'category_id'=>$this->item->category_id,
+            'category_title'=>ucwords($category_title),
         ];
         return parent::toArray($request);
     }

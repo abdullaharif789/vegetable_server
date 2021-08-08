@@ -17,6 +17,7 @@ class InventoryController extends BaseController
      */
     public function index(Request $request)
     {
+        // return json_decode($request->get("range"));
         $inventories=Inventory::with('item');
         if($request->get("item_id"))
             $inventories = $inventories->where("item_id",$request->get("item_id"));
