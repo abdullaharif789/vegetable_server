@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 use DB;
+use Carbon\Carbon;
 class Inventory extends JsonResource
 {
     /**
@@ -26,7 +27,7 @@ class Inventory extends JsonResource
             'buying_price'=>  $this->buying_price,
             'selling_price'=>  $this->selling_price,
             'tax'=> $this->item->tax?$this->selling_price/100*$tax:0,
-            "date"=> $this->stock_date,
+            "date"=> Carbon::createFromFormat('Y-m-d H:i:s', $this->created_at)->setTimezone('Europe/London')->isoFormat('DD/MM/Y, hh:mm:ss A'),
             'image'=>asset("storage/items/".$this->item->image),
             'title'=>ucwords($this->item->name),
             'active'=>$this->active,

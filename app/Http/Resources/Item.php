@@ -3,7 +3,7 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
-
+use Carbon\Carbon;
 class Item extends JsonResource
 {
     /**
@@ -18,10 +18,10 @@ class Item extends JsonResource
             'id'=>$this->id,
             'name'=>ucwords($this->name),
             'image'=>asset("storage/items/".$this->image),
-            "added"=> $this->created_at,
             'category_id'=>$this->category->id,
             'tax'=>$this->tax?"yes":"no",
-            'tax_boolean'=>$this->tax?true:false
+            'tax_boolean'=>$this->tax?true:false,
+            "added"=> Carbon::createFromFormat('Y-m-d H:i:s', $this->created_at)->setTimezone('Europe/London')->isoFormat('DD/MM/Y, hh:mm:ss A')
         ];
         return parent::toArray($request);
     }

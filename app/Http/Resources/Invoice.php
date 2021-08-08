@@ -3,7 +3,7 @@
 namespace App\Http\Resources;
 use App\Models\Party;
 use Illuminate\Http\Resources\Json\JsonResource;
-
+use Carbon\Carbon;
 class Invoice extends JsonResource
 {
     /**
@@ -23,7 +23,7 @@ class Invoice extends JsonResource
         return [
            'id'=> $this->id,
            'order_id'=> $this->order_id,
-           'created_at'=> $this->created_at,
+           'created_at'=> Carbon::createFromFormat('Y-m-d H:i:s', $this->created_at)->setTimezone('Europe/London')->isoFormat('DD/MM/Y, hh:mm:ss A'),
            'order'=>[
                 'cart' => $cart,
                 'status' => $this->order->status,

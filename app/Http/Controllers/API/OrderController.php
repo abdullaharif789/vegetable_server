@@ -55,7 +55,7 @@ class OrderController extends BaseController
             $sort=json_decode($request->get("sort"));
             $orders = $orders->orderBy($sort[0],$sort[1]);
         }
-        return $this->sendResponse(OrderResource::collection($orders->get()), 'Orders retrieved successfully.');
+        return $this->sendResponse(OrderResource::collection($orders->orderBy('id','DESC')->get()), 'Orders retrieved successfully.');
     }
     public function order_reports(Request $request)
     {
