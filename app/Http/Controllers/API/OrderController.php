@@ -91,7 +91,8 @@ class OrderController extends BaseController
     public function store(Request $request)
     {
 
-        $input = $request->all();        
+        $input = $request->all();
+        // return $input['van'];    
         $validator = Validator::make($input, [
             'party_id' => 'required',
             'cart' => 'required',
@@ -101,7 +102,7 @@ class OrderController extends BaseController
         if($validator->fails()){
             return $this->sendError('Validation Error.', $validator->errors());       
         }
-        // $input['status']=isset($input['status'])?$input['status']:"progress";
+        $input['van_id']=isset($input['van_id'])?$input['van_id']:"Van#1";
         $input['bank']=isset($input['bank'])&&$input['bank']=="Yes"?true:false;
         $input['manual']=isset($input['manual'])?true:false;
         $input['cart']=json_encode($input['cart']);
