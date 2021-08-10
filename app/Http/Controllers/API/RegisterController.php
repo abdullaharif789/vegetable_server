@@ -34,7 +34,8 @@ class RegisterController extends BaseController
 
         $input = $request->all();
         //here password is 'root' -> in future the password is auto generated and then email.
-        $input['password'] = bcrypt(uniqid());
+        $password=uniqid();
+        $input['password'] = bcrypt($password);
         $input['name']=strtolower($input['name']);
         $input['username']=strtolower(explode('@', $input['email'])[0]);
         $user = User::create($input);
@@ -52,7 +53,7 @@ class RegisterController extends BaseController
         $success['name'] =  ucwords($user->name);
         $success['username'] =  $user->username;
         $success['email'] =  $user->email;
-        (new MailController())->send_email(ucwords($input['name']),strtolower($input['email']),$input['password'],$input['username']);
+        (new MailController())->send_email(ucwords($input['name']),strtolower($input['email']),$password,$input['username']);
         return $this->sendResponse($success, 'User register successfully.');
     }
 

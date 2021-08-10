@@ -22,6 +22,6 @@ class MailController extends Controller {
         });
     }
     public function test(){
-        $this->send_email("Abdullah Arif","abdullaharif789@gmail.com","root");
+        // $this->send_email("Abdullah Arif","abdullaharif789@gmail.com","root");
     }
 }
