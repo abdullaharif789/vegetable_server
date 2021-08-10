@@ -21,8 +21,6 @@ class RegisterController extends BaseController
     private $adminUsername="admin";
     public function register(Request $request)
     {
-
-        return 123;
         $validator = Validator::make($request->all(), [
             'name' => 'required',
             'email' => 'required|email|unique:users',
