@@ -40,6 +40,7 @@ class Invoice extends JsonResource
                 'address'=>ucwords($party->address),
                 'contact_number'=>ucwords($party->contact_number),
            ],
+           'bank_visible'=>$this->order->bank
 
         ];
         return parent::toArray($request);

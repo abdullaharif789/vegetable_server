@@ -18,7 +18,8 @@ class Item extends Model
       'name',
       'image',
       'category_id',
-      'tax'
+      'tax',
+      'visible'
     ];
     public function category()
     {

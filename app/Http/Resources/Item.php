@@ -21,6 +21,8 @@ class Item extends JsonResource
             'category_id'=>$this->category->id,
             'tax'=>$this->tax?"yes":"no",
             'tax_boolean'=>$this->tax?true:false,
+            'visible'=>$this->visible?"yes":"no",
+            'visible_boolean'=>$this->visible?true:false,
             "added"=> Carbon::createFromFormat('Y-m-d H:i:s', $this->created_at)->setTimezone('Europe/London')->isoFormat('DD/MM/Y, hh:mm:ss A')
         ];
         return parent::toArray($request);

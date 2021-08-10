@@ -48,6 +48,7 @@ class ItemController extends BaseController
         //End Copy Image
         $input['name']=strtolower($input['name']);
         $input['tax']=isset($input['tax'])&&$input['tax']=="yes"?1:0;
+        $input['visible']=isset($input['visible'])&&$input['visible']=="yes"?1:0;
         $input['image']=$newName;//"https://via.placeholder.com/800/000000/FFF?text=".ucwords($input['name']);
         $item = Item::create($input);
         return $this->sendResponse(new ItemResource($item), 'Item created successfully.');
@@ -98,6 +99,7 @@ class ItemController extends BaseController
         }
         $item->name = $input['name'];
         $item->tax=isset($input['tax'])&&$input['tax']=="yes"?1:0;
+        $item->visible=isset($input['visible'])&&$input['visible']=="yes"?1:0;
         $item->category_id = $input['category_id'];
         $item->save();
         return $this->sendResponse(new ItemResource($item), 'Item updated successfully.');

@@ -23,6 +23,7 @@ class Order extends JsonResource
         return [
             'id'=>$this->id,
             'party_id'=>$this->party_id,
+            'party_business_name'=>ucwords($this->party->business_name),
             'cart'=>$cart,
             'total_items'=>count($cart),
             'total'=>number_format((float)$this->total, 2, '.', ''),
@@ -31,7 +32,8 @@ class Order extends JsonResource
             'status'=>ucwords($this->status),
             'order_code'=>$this->order_code,
             'order_from'=>$this->manual?'Manual':"App",
-            'created_at'=>Carbon::createFromFormat('Y-m-d H:i:s', $this->created_at)->setTimezone('Europe/London')->isoFormat('DD/MM/Y, hh:mm:ss A')
+            'created_at'=>Carbon::createFromFormat('Y-m-d H:i:s', $this->created_at)->setTimezone('Europe/London')->isoFormat('DD/MM/Y, hh:mm:ss A'),
+            'van'=>$this->van_id
         ];
         return parent::toArray($request);
     }

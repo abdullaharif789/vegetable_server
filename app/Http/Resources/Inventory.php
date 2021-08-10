@@ -34,6 +34,7 @@ class Inventory extends JsonResource
             'tax_available'=>$this->item->tax?true:false,
             'category_id'=>$this->item->category_id,
             'category_title'=>ucwords($category_title),
+            'visible'=>$this->item->visible
         ];
         return parent::toArray($request);
     }

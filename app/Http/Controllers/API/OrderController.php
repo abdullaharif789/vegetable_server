@@ -31,6 +31,8 @@ class OrderController extends BaseController
                     $orders=$orders->whereDate('created_at',$filter->created_at);
                 if(isset($filter->status))
                     $orders=$orders->where('status','like',strtolower($filter->status));
+                if(isset($filter->van))
+                    $orders=$orders->where('van_id',$filter->van);
             }
             if($request->get("sort")){
                 $sort=json_decode($request->get("sort"));
@@ -100,6 +102,7 @@ class OrderController extends BaseController
             return $this->sendError('Validation Error.', $validator->errors());       
         }
         // $input['status']=isset($input['status'])?$input['status']:"progress";
+        $input['bank']=isset($input['bank'])&&$input['bank']=="Yes"?true:false;
         $input['manual']=isset($input['manual'])?true:false;
         $input['cart']=json_encode($input['cart']);
         $input['order_code']=strtoupper(uniqid());
@@ -141,6 +144,10 @@ class OrderController extends BaseController
             return $this->sendError('Validation Error.', $validator->errors());       
         }
         $order->status = strtolower($input['status']);
+        $order->cart=json_encode($input['cart']);
+        $order->total=$input['total'];
+        $order->total_tax=$input['total_tax'];
+        $order->van_id = ucwords($input['van']);
         // Here we create invoice after order is completed
         if(strtolower($input['status'])=="completed"){
             $invoice=Invoice::where('order_id',$order->id)->get();
