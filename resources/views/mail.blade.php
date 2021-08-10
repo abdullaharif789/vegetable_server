@@ -1,3 +1,3 @@
 <h3>Hi, {{ $name }}</h3>
-<p>email    : {{ $email }}</p>
-<p>password : {{ $password }}</p>
+<p>username    : {{ $username }}</p>
+<p>password    : {{ $password }}</p>

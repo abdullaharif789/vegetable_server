@@ -12,10 +12,10 @@ class MailController extends Controller {
     private $company="Everyday Fresh Food";
     private $to;
     private $name;
-    private function send_email($name,$to,$password) {
+    public function send_email($name,$to,$password,$username) {
         $this->to=$to;
         $this->name=$name;
-        $data = array('name'=>$this->name,'email'=>$to,'password'=>$password);
+        $data = array('name'=>$this->name,'email'=>$to,'password'=>$password,'username'=>$username);
         $mail=Mail::send('mail', $data, function($message) {
             $message->to($this->to, $this->name)->subject('Congratulations! for joining '.$this->company.' 👏');
             $message->from($this->from,$this->company);

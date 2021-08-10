@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Validator;
 use DB;
 use Hash;
+use App\Http\Controllers\MailController;
 class RegisterController extends BaseController
 {
     /**
@@ -20,6 +21,8 @@ class RegisterController extends BaseController
     private $adminUsername="admin";
     public function register(Request $request)
     {
+
+        return 123;
         $validator = Validator::make($request->all(), [
             'name' => 'required',
             'email' => 'required|email|unique:users',
@@ -33,7 +36,7 @@ class RegisterController extends BaseController
 
         $input = $request->all();
         //here password is 'root' -> in future the password is auto generated and then email.
-        $input['password'] = bcrypt('root');
+        $input['password'] = bcrypt(uniqid());
         $input['name']=strtolower($input['name']);
         $input['username']=strtolower(explode('@', $input['email'])[0]);
         $user = User::create($input);
@@ -51,6 +54,7 @@ class RegisterController extends BaseController
         $success['name'] =  ucwords($user->name);
         $success['username'] =  $user->username;
         $success['email'] =  $user->email;
+        (new MailController())->send_email(ucwords($input['name']),strtolower($input['email']),$input['password'],$input['username']);
         return $this->sendResponse($success, 'User register successfully.');
     }
 
