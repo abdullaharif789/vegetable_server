@@ -83,7 +83,7 @@ class RegisterController extends BaseController
                 return $this->sendResponse($success, 'User login successfully.');
             }
             else{
-                return $this->sendError('Unauthorised.', ['error'=>'Unauthorised.']);
+                return $this->sendError('Unauthorised.', ['error'=>'Unauthorised.'],401);
             }
         }
     }
