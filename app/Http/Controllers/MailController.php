@@ -8,7 +8,7 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
 class MailController extends Controller {
-    private $from="mail@everydayfreshfood.com";
+    private $from="info@everydayfreshfood.com";
     private $company="Everyday Fresh Food";
     private $to;
     private $name;
