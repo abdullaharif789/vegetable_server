@@ -19,7 +19,7 @@ class OrderController extends BaseController
      */
     public function index(Request $request)
     {
-        $orders=Order::with('party');
+        $orders=Order::with('party')->where('manual',0);
         if($request->get("party_id"))
             $orders = Order::where('party_id',$request->get("party_id"))->orderBy('id','desc');
         else{
