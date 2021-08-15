@@ -187,7 +187,7 @@ class OrderController extends BaseController
             }
         }
         // // Here we create invoice after order is cancel
-        if(strtolower($input['status'])=="canceled"){
+        else{
             $invoice=Invoice::where('order_id',$order->id)->get();
             if(count($invoice)==1){
                 //Increment Quantites
