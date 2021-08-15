@@ -22,7 +22,7 @@ class Invoice extends JsonResource
         }
         return [
            'id'=> $this->id,
-           'order_id'=> $this->order_id,
+           'orderId'=> $this->order_id,
            'created_at'=> Carbon::createFromFormat('Y-m-d H:i:s', $this->created_at)->setTimezone('Europe/London')->isoFormat('DD/MM/Y, hh:mm:ss A'),
            'order'=>[
                 'cart' => $cart,

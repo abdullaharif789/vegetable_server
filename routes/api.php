@@ -37,6 +37,7 @@ Route::resource('invoices', InvoiceController::class);
 Route::resource('orders', OrderController::class);
 Route::get('order_reports', [OrderController::class, 'order_reports']);
 Route::get('inventory_reports', [InventoryController::class, 'index']);
-//
 Route::post('manual_orders', [OrderController::class, 'store']);
 Route::get('manual_orders', [OrderController::class, 'manual_orders']);
+Route::get('all_orders', [OrderController::class, 'all_orders']);
+Route::get('van_reports', [OrderController::class, 'all_orders']);
