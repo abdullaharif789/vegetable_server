@@ -186,6 +186,19 @@ class OrderController extends BaseController
                 $invoice = Invoice::create($output);
             }
         }
+        // // Here we create invoice after order is cancel
+        if(strtolower($input['status'])=="canceled"){
+            $invoice=Invoice::where('order_id',$order->id)->get();
+            if(count($invoice)==1){
+                //Increment Quantites
+                foreach(json_decode($order->cart) as $item){
+                    DB::table('inventories')->where('id',$item->inventory_id)->increment('remaining_unit',$item->quantity);
+                }
+                $output['order_id']=$order->id;
+                $output['order_code']=strtoupper($order->order_code);
+                DB::table('invoices')->where('id',$invoice[0]->id)->delete();
+            }
+        }
         $order->save();
         return $this->sendResponse(new OrderResource($order), 'Order updated successfully.');
     }
