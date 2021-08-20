@@ -20,6 +20,7 @@ class Party extends Model
         'business_name',
         'address',
         'contact_number',
+        'active'
     ];
      public function user()
     {

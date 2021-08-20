@@ -31,7 +31,6 @@ class RegisterController extends BaseController
         if($validator->fails()){
             return $this->sendError('Validation Error.', $validator->errors());
         }
-
         $input = $request->all();
         //here password is 'root' -> in future the password is auto generated and then email.
         $password=uniqid();
@@ -78,6 +77,9 @@ class RegisterController extends BaseController
                 $success['email'] =  $user->email;
                 $success['username'] =  $user->username;
                 $party =  Party::where('user_id',$user->id)->first();
+                if($party->active==0){
+                    return $this->sendError('Inactive user.', ['error'=>'Inactive user.'],417);
+                }
                 $success['id'] = $party->id;
                 $success['avatar'] = $party->avatar;
                 $success['business_name'] = ucwords($party->business_name);

@@ -25,6 +25,10 @@ class PartyController extends BaseController
                 $parties=$parties->whereIn('id',$filter->id);
             }
         }
+        if($request->get("sort")){
+            $sort=json_decode($request->get("sort"));
+            $parties = $parties->orderBy($sort[0],$sort[1]);
+        }
         return $this->sendResponse(PartyResource::collection($parties->get()), 'Partys retrieved successfully.');
     }
     /**
@@ -74,6 +78,7 @@ class PartyController extends BaseController
             return $this->sendError('Validation Error.', $validator->errors());
         }
         /*Extra Flieds*/
+        $party->active=isset($input['active'])&&$input['active']=="yes"?1:0;
         $party->business_name=strtolower($input['business_name']);
         $party->address=strtolower($input['address']);
         $party->contact_number=$input['contact_number'];

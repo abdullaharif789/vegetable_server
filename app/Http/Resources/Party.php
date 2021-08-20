@@ -23,6 +23,8 @@ class Party extends JsonResource
             'business_name'=>ucwords($this->business_name),
             'address'=>ucwords($this->address),
             'contact_number'=>ucwords($this->contact_number),
+            'active_boolean'=>$this->active?true:false,
+            'active'=>$this->active?"yes":"no",
         ];
     }
 }
