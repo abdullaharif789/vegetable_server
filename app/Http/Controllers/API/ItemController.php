@@ -15,10 +15,15 @@ class ItemController extends BaseController
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $items = Item::with('category')->orderby('id',"DESC")->get();
-        return $this->sendResponse(ItemResource::collection($items), 'Items retrieved successfully.');
+        $items = Item::with('category');
+        if($request->get("filter")){
+            $filter=json_decode($request->get("filter"));
+            if(isset($filter->name))
+                $items=$items->where('name','like',"%".strtolower($filter->name)."%");
+        }
+        return $this->sendResponse(ItemResource::collection($items->orderby('name',"ASC")->get()), 'Items retrieved successfully.');
     }
     /**
      * Store a newly created resource in storage.
