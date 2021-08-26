@@ -29,6 +29,7 @@ class Inventory extends JsonResource
             'tax'=> $this->item->tax?$this->selling_price/100*$tax:0,
             "date"=> Carbon::createFromFormat('Y-m-d H:i:s', $this->created_at)->setTimezone('Europe/London')->isoFormat('DD/MM/Y, hh:mm:ss A'),
             'image'=>asset("storage/items/".$this->item->image),
+            'r_image'=>asset("storage/items/r_".$this->item->image),
             'title'=>ucwords($this->item->name),
             'active'=>$this->active,
             'tax_available'=>$this->item->tax?true:false,
