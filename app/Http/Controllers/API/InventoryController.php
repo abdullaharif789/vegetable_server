@@ -19,6 +19,7 @@ class InventoryController extends BaseController
     {
         // return json_decode($request->get("range"));
         $inventories=Inventory::with('item');
+        $count=$inventories->get()->count();
         if($request->get("item_id"))
             $inventories = $inventories->where("item_id",$request->get("item_id"));
         else if($request->get("source")=="app"){
@@ -55,6 +56,10 @@ class InventoryController extends BaseController
                 $sort=json_decode($request->get("sort"));
                 $inventories = $inventories->orderBy($sort[0],$sort[1]);
             }
+            if($request->get("range")){
+                $range=json_decode($request->get("range"));
+                $inventories=$inventories->offset($range[0])->limit($range[1]-$range[0]+1);
+            }
         }
         //Manage Active App Chips
         $inventories=$inventories->get();
@@ -66,7 +71,7 @@ class InventoryController extends BaseController
             if($this->arraySearch($inventories[$i]->id,$activeIds)) $inventories[$i]->active=true;
             else $inventories[$i]->active=false;
         }
-        return $this->sendResponse(InventoryResource::collection($inventories), 'Inventories retrieved successfully.');
+        return $this->sendResponse(InventoryResource::collection($inventories), 'Inventories retrieved successfully.',$count);
     }
     /**
      * Store a newly created resource in storage.

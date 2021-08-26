@@ -68,6 +68,7 @@ class OrderController extends BaseController
     public function manual_orders(Request $request)
     {
         $orders=Order::with('party')->where('manual',1);
+        $count=$orders->get()->count();
         if($request->get("filter")){
             $filter=json_decode($request->get("filter"));
             if(isset($filter->order_code))
@@ -81,7 +82,11 @@ class OrderController extends BaseController
             $sort=json_decode($request->get("sort"));
             $orders = $orders->orderBy($sort[0],$sort[1]);
         }
-        return $this->sendResponse(OrderResource::collection($orders->orderBy('id','DESC')->get()), 'Orders retrieved successfully.');
+        if($request->get("range")){
+            $range=json_decode($request->get("range"));
+            $orders=$orders->offset($range[0])->limit($range[1]-$range[0]+1);
+        }
+        return $this->sendResponse(OrderResource::collection($orders->orderBy('id','DESC')->get()), 'Orders retrieved successfully.',$count);
     }
     public function order_reports(Request $request)
     {

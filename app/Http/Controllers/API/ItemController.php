@@ -18,12 +18,17 @@ class ItemController extends BaseController
     public function index(Request $request)
     {
         $items = Item::with('category');
+        $count = $items->get()->count();;
         if($request->get("filter")){
             $filter=json_decode($request->get("filter"));
             if(isset($filter->name))
                 $items=$items->where('name','like',"%".strtolower($filter->name)."%");
         }
-        return $this->sendResponse(ItemResource::collection($items->orderby('name',"ASC")->get()), 'Items retrieved successfully.');
+        if($request->get("range")){
+            $range=json_decode($request->get("range"));
+            $items=$items->offset($range[0])->limit($range[1]-$range[0]+1);
+        }
+        return $this->sendResponse(ItemResource::collection($items->orderby('name',"ASC")->get()), 'Items retrieved successfully.',$count);
     }
     /**
      * Store a newly created resource in storage.
