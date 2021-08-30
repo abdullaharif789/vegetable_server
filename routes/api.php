@@ -4,7 +4,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 //use App\Http\Controllers\API\TemplateController; 
 use App\Http\Controllers\API\RegisterController; 
-use App\Http\Controllers\API\PartyController; 
+use App\Http\Controllers\API\PartyController;
+use App\Http\Controllers\API\TransactionController; 
 use App\Http\Controllers\API\InventoryController; 
 use App\Http\Controllers\API\ItemController; 
 use App\Http\Controllers\API\OrderController; 
@@ -30,6 +31,7 @@ Route::middleware('auth:api')->group( function () {
 	Route::get('logout','App\Http\Controllers\API\RegisterController@logout');
 });
 Route::resource('parties', PartyController::class);
+Route::resource('transactions', TransactionController::class);
 Route::resource('categories', CategoryController::class);
 Route::resource('inventories', InventoryController::class);
 Route::resource('items', ItemController::class);

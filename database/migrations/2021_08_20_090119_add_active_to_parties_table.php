@@ -15,7 +15,7 @@ class AddActiveToPartiesTable extends Migration
     {
         Schema::table('parties', function (Blueprint $table) {
             //
-            $table->boolean('active')->default(false);
+            $table->boolean('active')->default(true);
         });
     }
 
