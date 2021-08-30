@@ -18,9 +18,16 @@ class TransactionController extends BaseController
     public function index(Request $request)
     {
         $transactions = Transaction::with("party");
+         if($request->get("filter")){
+            $filter=json_decode($request->get("filter"));
+            if(isset($filter->paid))
+                $transactions=$transactions->where('paid',strtolower($filter->paid)=="paid"?1:0);
+            if(isset($filter->date))
+                $transactions=$transactions->where('date',"like","%".$filter->date."%");
+        }
         if($request->get("sort")){
             $sort=json_decode($request->get("sort"));
-            $transactions = Transaction::orderBy($sort[0],$sort[1]);
+            $transactions = $transactions->orderBy($sort[0],$sort[1]);
         }
         return $this->sendResponse(TransactionResource::collection($transactions->get()), 'Transactions retrieved successfully.');
     }
