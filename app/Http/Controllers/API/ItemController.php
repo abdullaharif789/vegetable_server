@@ -23,6 +23,7 @@ class ItemController extends BaseController
             $filter=json_decode($request->get("filter"));
             if(isset($filter->name))
                 $items=$items->where('name','like',"%".strtolower($filter->name)."%");
+            $count=$items->get()->count();
         }
         if($request->get("range")){
             $range=json_decode($request->get("range"));

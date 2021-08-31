@@ -24,6 +24,8 @@ class TransactionController extends BaseController
                 $transactions=$transactions->where('paid',strtolower($filter->paid)=="paid"?1:0);
             if(isset($filter->date))
                 $transactions=$transactions->where('date',"like","%".$filter->date."%");
+            if(isset($filter->party_id))
+                $transactions=$transactions->where('party_id',$filter->party_id);
         }
         if($request->get("sort")){
             $sort=json_decode($request->get("sort"));

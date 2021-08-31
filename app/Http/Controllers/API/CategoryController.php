@@ -15,10 +15,22 @@ class CategoryController extends BaseController
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $categories = Category::all();
-        return $this->sendResponse(CategoryResource::collection($categories), 'Categorys retrieved successfully.');
+        $categories = Category::where("id",">",0);
+        $count=$categories->get()->count();
+        if($request->get('filter')){
+            $filter=json_decode($request->get("filter"));
+            if(isset($filter->name)){
+                $categories=$categories->where('name','like',"%".strtolower($filter->name)."%");
+            }
+            $count=$categories->get()->count();
+        }
+        if($request->get("range")){
+            $range=json_decode($request->get("range"));
+            $categories=$categories->offset($range[0])->limit($range[1]-$range[0]+1);
+        }
+        return $this->sendResponse(CategoryResource::collection($categories->get()), 'Categorys retrieved successfully.',$count);
     }
     /**
      * Store a newly created resource in storage.

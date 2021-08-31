@@ -20,6 +20,7 @@ class OrderController extends BaseController
     public function index(Request $request)
     {
         $orders=Order::with('party')->where('manual',0);
+        $count = $orders->get()->count();;
         if($request->get("party_id"))
             $orders = Order::where('party_id',$request->get("party_id"))->orderBy('id','desc');
         else{
@@ -33,13 +34,14 @@ class OrderController extends BaseController
                     $orders=$orders->where('status','like',strtolower($filter->status));
                 if(isset($filter->van))
                     $orders=$orders->where('van_id',$filter->van);
+                $count = $orders->get()->count();;
             }
             if($request->get("sort")){
                 $sort=json_decode($request->get("sort"));
                 $orders = $orders->orderBy($sort[0],$sort[1]);
             }
         }
-        return $this->sendResponse(OrderResource::collection($orders->get()), 'Orders retrieved successfully.');
+        return $this->sendResponse(OrderResource::collection($orders->get()), 'Orders retrieved successfully.',$count);
     }
     public function all_orders(Request $request)
     {
@@ -77,6 +79,7 @@ class OrderController extends BaseController
                 $orders=$orders->whereDate('created_at',$filter->created_at);
             if(isset($filter->status))
                 $orders=$orders->where('status','like',strtolower($filter->status));
+            $count=$orders->get()->count();
         }
         if($request->get("sort")){
             $sort=json_decode($request->get("sort"));

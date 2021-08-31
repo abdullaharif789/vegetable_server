@@ -25,6 +25,10 @@ class PartyController extends BaseController
             if(isset($filter->id)){
                 $parties=$parties->whereIn('id',$filter->id);
             }
+            if(isset($filter->name)){
+                $parties=$parties->where('business_name','like',"%".strtolower($filter->name)."%");
+            }
+            $count=$parties->get()->count();
         }
         if($request->get("sort")){
             $sort=json_decode($request->get("sort"));

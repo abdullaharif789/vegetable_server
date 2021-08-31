@@ -51,6 +51,7 @@ class InventoryController extends BaseController
                     $inventories=$inventories->where('status','like',strtolower($filter->status));
                 if(isset($filter->item_id))
                     $inventories=$inventories->where('item_id',$filter->item_id);
+                $count=$inventories->get()->count();
             }
             if($request->get("sort")){
                 $sort=json_decode($request->get("sort"));
