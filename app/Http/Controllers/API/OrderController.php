@@ -172,7 +172,7 @@ class OrderController extends BaseController
         $input = $request->all();
         $validator = Validator::make($input, [
             'status' => 'required',
-            'van_id'=>'required'
+            'van'=>'required'
         ]);
         if($validator->fails()){
             return $this->sendError('Validation Error.', $validator->errors());       
