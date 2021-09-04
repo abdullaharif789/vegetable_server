@@ -34,6 +34,8 @@ class OrderController extends BaseController
                     $orders=$orders->where('status','like',strtolower($filter->status));
                 if(isset($filter->van))
                     $orders=$orders->where('van_id',$filter->van);
+                if(isset($filter->party_id))
+                    $orders=$orders->where('party_id',$filter->party_id);
                 $count = $orders->get()->count();;
             }
             if($request->get("sort")){
@@ -79,6 +81,10 @@ class OrderController extends BaseController
                 $orders=$orders->whereDate('created_at',$filter->created_at);
             if(isset($filter->status))
                 $orders=$orders->where('status','like',strtolower($filter->status));
+            if(isset($filter->party_id))
+                $orders=$orders->where('party_id',$filter->party_id);
+            if(isset($filter->van))
+                $orders=$orders->where('van_id',$filter->van);
             $count=$orders->get()->count();
         }
         if($request->get("sort")){
