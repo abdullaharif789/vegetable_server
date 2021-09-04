@@ -134,7 +134,7 @@ class OrderController extends BaseController
         if($validator->fails()){
             return $this->sendError('Validation Error.', $validator->errors());       
         }
-        $input['van_id']=isset($input['van_id'])?$input['van_id']:"Van#1";
+        $input['van_id']=isset($input['van_id'])?$input['van_id']:null;
         $input['bank']=isset($input['bank'])&&$input['bank']=="Yes"?true:false;
         $input['manual']=isset($input['manual'])?true:false;
         $input['cart']=json_encode($input['cart']);
