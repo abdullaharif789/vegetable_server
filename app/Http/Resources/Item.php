@@ -17,8 +17,8 @@ class Item extends JsonResource
         return [
             'id'=>$this->id,
             'name'=>ucwords($this->name),
-            'image'=>asset("storage/items/".$this->image),
-            'r_image'=>asset("storage/items/r_".$this->image),
+            'image'=>strpos($this->image,"placeholder.com")?$this->image:asset("storage/items/".$this->image),
+            'r_image'=>strpos($this->image,"placeholder.com")?$this->image:asset("storage/items/r_".$this->image),
             'category_id'=>$this->category->id,
             'tax'=>$this->tax?"yes":"no",
             'tax_boolean'=>$this->tax?true:false,

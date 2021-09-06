@@ -43,24 +43,29 @@ class ItemController extends BaseController
         $validator = Validator::make($input, [
             'name' => 'required|unique:items',
             'category_id' => 'required',
-            'image'=> 'required',
+            // 'image'=> 'required',
         ]);
         if($validator->fails()){
             return $this->sendError('Validation Error.', $validator->errors());       
         }
         //Copy Image
-        $image = $request->image;
-        list($type, $image) = explode(';', $image);
-        list(, $image)      = explode(',', $image);
-        $image = base64_decode($image);
-        $type=explode("/",$type)[1];
-        $newName=uniqid().".".$type;
-        file_put_contents('storage/items/'.$newName, $image);
+        if($request->image){
+            $image = $request->image;
+            list($type, $image) = explode(';', $image);
+            list(, $image)      = explode(',', $image);
+            $image = base64_decode($image);
+            $type=explode("/",$type)[1];
+            $newName=uniqid().".".$type;
+            file_put_contents('storage/items/'.$newName, $image);
+        }
+        else{
+          $newName="https://via.placeholder.com/200/000000/FFF?text=".ucwords($input['name']);  
+        }
         //End Copy Image
         $input['name']=strtolower($input['name']);
         $input['tax']=isset($input['tax'])&&$input['tax']=="yes"?1:0;
         $input['visible']=isset($input['visible'])&&$input['visible']=="yes"?1:0;
-        $input['image']=$newName;//"https://via.placeholder.com/800/000000/FFF?text=".ucwords($input['name']);
+        $input['image']=$newName;//
         $item = Item::create($input);
         return $this->sendResponse(new ItemResource($item), 'Item created successfully.');
     } 

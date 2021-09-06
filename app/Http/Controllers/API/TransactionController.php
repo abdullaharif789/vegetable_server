@@ -7,7 +7,8 @@ use App\Http\Controllers\API\BaseController as BaseController;
 use App\Models\Transaction;
 use Validator;
 use App\Http\Resources\Transaction as TransactionResource;
-   
+use DB;
+
 class TransactionController extends BaseController
 {
     /**
@@ -17,7 +18,12 @@ class TransactionController extends BaseController
      */
     public function index(Request $request)
     {
+        if($request->get("totalUnpaid")){
+            $data=DB::select("SELECT sum(amount) as total FROM transactions WHERE paid=1");
+            return $data[0]->total;
+        }
         $transactions = Transaction::with("party");
+        $count=$transactions->get()->count();
          if($request->get("filter")){
             $filter=json_decode($request->get("filter"));
             if(isset($filter->paid))
@@ -26,12 +32,17 @@ class TransactionController extends BaseController
                 $transactions=$transactions->where('date',"like","%".$filter->date."%");
             if(isset($filter->party_id))
                 $transactions=$transactions->where('party_id',$filter->party_id);
+            $count=$transactions->get()->count();
         }
         if($request->get("sort")){
             $sort=json_decode($request->get("sort"));
             $transactions = $transactions->orderBy($sort[0],$sort[1]);
         }
-        return $this->sendResponse(TransactionResource::collection($transactions->get()), 'Transactions retrieved successfully.');
+        if($request->get("range")){
+            $range=json_decode($request->get("range"));
+            $transactions=$transactions->offset($range[0])->limit($range[1]-$range[0]+1);
+        }
+        return $this->sendResponse(TransactionResource::collection($transactions->get()), 'Transactions retrieved successfully.',$count);
     }
     /**
      * Store a newly created resource in storage.
