@@ -18,6 +18,10 @@ class TransactionController extends BaseController
      */
     public function index(Request $request)
     {
+        if($request->get("totalUnpaid")){
+            $data=DB::select("SELECT sum(amount) as total FROM transactions WHERE paid=1");
+            return $data[0]->total;
+        }
         $transactions = Transaction::with("party");
         $count=$transactions->get()->count();
          if($request->get("filter")){

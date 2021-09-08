@@ -18,7 +18,7 @@ class CreateTransactionsTable extends Migration
             $table->bigInteger('party_id')->unsigned();
             $table->float("amount");
             $table->boolean('paid')->default(false);
-            $table->dateTime('date');
+            $table->dateTime('date')->useCurrent();
             $table->timestamps();
         });
     }

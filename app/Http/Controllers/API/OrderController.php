@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\API\BaseController as BaseController;
 use App\Models\Order;
 use App\Models\Invoice;
+use App\Models\Transaction;
 use Validator;
 use App\Http\Resources\Order as OrderResource;
 use App\Http\Resources\Report as ReportResource;
@@ -199,6 +200,10 @@ class OrderController extends BaseController
                 $output['order_id']=$order->id;
                 $output['order_code']=strtoupper($order->order_code);
                 $invoice = Invoice::create($output);
+                //create transaction
+                $output['amount']=(float)($order->total+$order->total_tax);
+                $output['party_id']=$order->party_id;
+                Transaction::create($output);
             }
         }
         // // Here we create invoice after order is cancel
