@@ -20,6 +20,7 @@ class OrderController extends BaseController
      */
     public function index(Request $request)
     {
+        
         $orders=Order::with('party')->where('manual',0);
         $count = $orders->get()->count();;
         if($request->get("party_id"))
