@@ -9,6 +9,7 @@ use App\Http\Controllers\API\TransactionController;
 use App\Http\Controllers\API\InventoryController; 
 use App\Http\Controllers\API\ItemController; 
 use App\Http\Controllers\API\OrderController; 
+use App\Http\Controllers\API\PurchaseOrderController; 
 use App\Http\Controllers\API\InvoiceController; 
 use App\Http\Controllers\API\CategoryController;
   
@@ -43,3 +44,5 @@ Route::post('manual_orders', [OrderController::class, 'store']);
 Route::get('manual_orders', [OrderController::class, 'manual_orders']);
 Route::get('all_orders', [OrderController::class, 'all_orders']);
 Route::get('van_reports', [OrderController::class, 'all_orders']);
+/**/
+Route::resource('purchase_orders', PurchaseOrderController::class);
