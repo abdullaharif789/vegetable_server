@@ -18,6 +18,10 @@ class PurchaseOrder extends Model
         'party_id',
         'cart',
         'van_id',
+        'total'
     ];
-
+    public function party()
+    {
+        return $this->belongsTo(Party::class);
+    }
 }

@@ -17,7 +17,7 @@ class PurchaseOrderController extends BaseController
      */
     public function index(Request $request)
     {
-        $purchaseOrders = PurchaseOrder::where("id",">","0");
+        $purchaseOrders = PurchaseOrder::with("party");
         $count = $purchaseOrders->get()->count();;
         if($request->get("filter")){
             $filter=json_decode($request->get("filter"));
@@ -40,8 +40,12 @@ class PurchaseOrderController extends BaseController
             $sort=json_decode($request->get("sort"));
             $purchaseOrders = $purchaseOrders->orderBy($sort[0],$sort[1]);
         }
-
-        return $this->sendResponse(PurchaseOrderResource::collection($purchaseOrders->get()), 'Purchase Orders retrieved successfully.',$count);
+        $purchaseOrders = $purchaseOrders->get();
+        $purchaseOrders = $purchaseOrders->each(function ($purchaseOrder, $index) {
+            $purchaseOrder->sr = $index + 1;
+        });
+        $collection=PurchaseOrderResource::collection($purchaseOrders);
+        return $this->sendResponse($collection, 'Purchase Orders retrieved successfully.',$count);
     }
     /**
      * Store a newly created resource in storage.
@@ -52,11 +56,11 @@ class PurchaseOrderController extends BaseController
     public function store(Request $request)
     {
         $input = $request->all();
-        
         $validator = Validator::make($input, [
            'party_id' => 'required',
            'cart' => 'required',
            'van_id' => 'required',
+           'total' => 'required',
         ]);
        
         if($validator->fails()){
@@ -92,18 +96,21 @@ class PurchaseOrderController extends BaseController
     public function update(Request $request, PurchaseOrder $purchaseOrder)
     {
         $input = $request->all();
-        /*
+        
         $validator = Validator::make($input, [
-            'name' => 'required',
-            'detail' => 'required'
+           'party_id' => 'required',
+           'cart' => 'required',
+           'van_id' => 'required',
+           'total' => 'required',
         ]);
         
         if($validator->fails()){
             return $this->sendError('Validation Error.', $validator->errors());       
         }
-        */
-        //$purchaseOrder->name = $input['name'];
-        //$purchaseOrder->detail = $input['detail'];
+        $purchaseOrder->cart=json_encode($input['cart']);
+        $purchaseOrder->party_id=$input['party_id'];
+        $purchaseOrder->van_id=$input['van_id'];
+        $purchaseOrder->total=$input['total'];
         $purchaseOrder->save();
    
         return $this->sendResponse(new PurchaseOrderResource($purchaseOrder), 'PurchaseOrder updated successfully.');
