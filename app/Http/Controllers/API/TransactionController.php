@@ -18,6 +18,7 @@ class TransactionController extends BaseController
      */
     public function index(Request $request)
     {
+        
         if($request->get("totalUnpaid")){
             $data=DB::select("SELECT sum(amount) as total FROM transactions WHERE paid=1");
             return $data[0]->total;
@@ -98,7 +99,7 @@ class TransactionController extends BaseController
         $input = $request->all();
         
         $validator = Validator::make($input, [
-            'party_id' => 'required',
+            // 'party_id' => 'required',
             'amount' => 'required',
             'date'=> 'required',
         ]);
@@ -106,7 +107,7 @@ class TransactionController extends BaseController
         if($validator->fails()){
             return $this->sendError('Validation Error.', $validator->errors());       
         }
-        $transaction->party_id=$input['party_id'];
+        // $transaction->party_id=$input['party_id'];
         $transaction->date=date('Y-m-d h:i:s', strtotime($input['date']));
         $transaction->amount=$input['amount'];
         $transaction->paid=isset($input['paid']) && $input['paid'] == "Paid"?1:0;

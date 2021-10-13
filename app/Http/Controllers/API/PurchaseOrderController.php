@@ -6,8 +6,8 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\API\BaseController as BaseController;
 use App\Models\PurchaseOrder;
 use Validator;
-use App\Http\Resources\PurchaseOrder as PurchaseOrderResource;
-   
+use DB;
+use App\Http\Resources\PurchaseOrder as PurchaseOrderResource;  
 class PurchaseOrderController extends BaseController
 {
     /**
@@ -27,6 +27,9 @@ class PurchaseOrderController extends BaseController
 
             if(isset($filter->party_id))
                 $purchaseOrders=$purchaseOrders->where('party_id',$filter->party_id);
+
+            if(isset($filter->item_id))
+                $purchaseOrders=$purchaseOrders->whereJsonContains('cart', [['item_id' => $filter->item_id]]);
 
             if(isset($filter->start_date) || isset($filter->end_date)){
                 $from=isset($filter->start_date)?date($filter->start_date):date('1990-01-01');
