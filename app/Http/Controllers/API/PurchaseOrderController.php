@@ -47,9 +47,10 @@ class PurchaseOrderController extends BaseController
             $range=json_decode($request->get("range"));
             $purchaseOrders=$purchaseOrders->offset($range[0])->limit($range[1]-$range[0]+1);
         }
+        $counter=(int)(json_decode($request->get("range"))[0]);
         $purchaseOrders = $purchaseOrders->get();
-        $purchaseOrders = $purchaseOrders->each(function ($purchaseOrder, $index) {
-            $purchaseOrder->sr = $index + 1;
+        $purchaseOrders = $purchaseOrders->each(function ($purchaseOrder, $index) use($counter) {
+            $purchaseOrder->sr = $counter + $index + 1;
         });
         $collection=PurchaseOrderResource::collection($purchaseOrders);
         return $this->sendResponse($collection, 'Purchase Orders retrieved successfully.',$count);
