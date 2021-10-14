@@ -54,6 +54,28 @@ class PurchaseOrderController extends BaseController
         $collection=PurchaseOrderResource::collection($purchaseOrders);
         return $this->sendResponse($collection, 'Purchase Orders retrieved successfully.',$count);
     }
+    public function purchase_items(Request $request)
+    {
+        $purchaseOrders = PurchaseOrder::with("party");
+        $count = $purchaseOrders->get()->count();
+        if($request->get("filter")){
+            $filter=json_decode($request->get("filter"));
+            if(isset($filter->van))
+                $purchaseOrders=$purchaseOrders->where('van_id',$filter->van);
+            if(isset($filter->start_date) || isset($filter->end_date)){
+                $from=isset($filter->start_date)?date($filter->start_date):date('1990-01-01');
+                $to=isset($filter->end_date)?date($filter->end_date):date('2099-01-01');
+                $purchaseOrders=$purchaseOrders->whereDate('created_at','<=',$to)->whereDate('created_at','>=',$from);
+            }
+            $count = $purchaseOrders->get()->count();;
+        }
+        $purchaseOrders = $purchaseOrders->get();
+        $purchaseOrders = $purchaseOrders->each(function ($purchaseOrder, $index) {
+            $purchaseOrder->sr = $index + 1;
+        });
+        $collection=PurchaseOrderResource::collection($purchaseOrders);
+        return $this->sendResponse($collection, 'Purchase Items retrieved successfully.',$count);
+    }
     /**
      * Store a newly created resource in storage.
      *

@@ -41,6 +41,35 @@ class PartyController extends BaseController
         return $this->sendResponse(PartyResource::collection($parties->get()), 'Partys retrieved successfully.',$count);
     }
     /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function purchase_items(Request $request)
+    {
+        $parties = Party::with('user');
+        $count=$parties->get()->count();
+        if($request->get('filter')){
+            $filter=json_decode($request->get("filter"));
+            if(isset($filter->id)){
+                $parties=$parties->whereIn('id',$filter->id);
+            }
+            if(isset($filter->name)){
+                $parties=$parties->where('business_name','like',"%".strtolower($filter->name)."%");
+            }
+            $count=$parties->get()->count();
+        }
+        if($request->get("sort")){
+            $sort=json_decode($request->get("sort"));
+            $parties = $parties->orderBy($sort[0],$sort[1]);
+        }
+        if($request->get("range")){
+            $range=json_decode($request->get("range"));
+            $parties=$parties->offset($range[0])->limit($range[1]-$range[0]+1);
+        }
+        return $this->sendResponse(PartyResource::collection($parties->get()), 'Partys retrieved successfully.',$count);
+    }
+    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
