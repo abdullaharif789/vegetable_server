@@ -82,20 +82,7 @@ class InvoiceController extends BaseController
     public function update(Request $request, Invoice $invoice)
     {
         $input = $request->all();
-        /*
-        $validator = Validator::make($input, [
-            'name' => 'required',
-            'detail' => 'required'
-        ]);
-        
-        if($validator->fails()){
-            return $this->sendError('Validation Error.', $validator->errors());       
-        }
-        */
-        //$invoice->name = $input['name'];
-        //$invoice->detail = $input['detail'];
         $invoice->save();
-   
         return $this->sendResponse(new InvoiceResource($invoice), 'Invoice updated successfully.');
     }
    
