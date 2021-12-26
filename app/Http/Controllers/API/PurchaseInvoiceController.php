@@ -11,6 +11,7 @@ use App\Models\Transaction;
 use Validator;
 use App\Http\Resources\PurchaseInvoice as PurchaseInvoiceResource;
 use App\Http\Resources\PurchaseOrder as PurchaseOrderResource;
+use App\Http\Resources\PurchaseReport as ReportResource;
    
 class PurchaseInvoiceController extends BaseController
 {
@@ -71,6 +72,29 @@ class PurchaseInvoiceController extends BaseController
             $purchaseInvoice->cart=json_encode($purchaseInvoice->cart);
         });
         return $this->sendResponse(PurchaseOrderResource::collection($purchaseInvoices), 'Purchase Invoices retrieved successfully.');
+    }    
+    public function purchase_order_reports(Request $request)
+    {
+        $reports=PurchaseInvoice::with('party');
+        if($request->get("filter")){
+            $filter=json_decode($request->get("filter"));
+            if(isset($filter->order_code))
+                $reports=$reports->where('order_code','like',"%".strtoupper($filter->order_code)."%");
+            if(isset($filter->start_date) || isset($filter->end_date)){
+                $from=isset($filter->start_date)?date($filter->start_date):date('1990-01-01');
+                $to=isset($filter->end_date)?date($filter->end_date):date('2099-01-01');
+                $reports=$reports->whereDate('created_at','<=',$to)->whereDate('created_at','>=',$from);
+            }
+            if(isset($filter->party_id))
+                $reports=$reports->where('party_id',$filter->party_id);
+        }
+        if($request->get("sort")){
+            $sort=json_decode($request->get("sort"));
+            $reports = $reports->orderBy($sort[0],$sort[1]);
+        }
+        $reports=$reports->get();
+        $reports=ReportResource::collection($reports);
+        return $this->sendResponse($reports, 'Orders retrieved successfully.');
     }
     /**
      * Store a newly created resource in storage.
