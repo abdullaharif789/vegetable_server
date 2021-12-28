@@ -17,7 +17,7 @@ class AddBankToPurchaseInvoicesTable extends Migration
             //
             $table->boolean('bank')->default(false);
             $table->string('status')->default("active");
-            $table->bigInteger('purchase_order_id')->unsigned();
+            $table->bigInteger('purchase_order_id')->unsigned()->nullable()->default(null);
         });
     }
 
