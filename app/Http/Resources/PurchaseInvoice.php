@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use Carbon\Carbon;
 
 class PurchaseInvoice extends JsonResource
 {
@@ -14,8 +15,24 @@ class PurchaseInvoice extends JsonResource
      */
     public function toArray($request)
     {
-        return [
-            'id' => $this->id,
+        return[
+            'id'=>$this->id,
+            "party_id"=>$this->party_id,
+            "party"=>[
+                'id'=>$this->party->id,
+                'business_name'=>ucwords($this->party->business_name),
+                'address'=>ucwords($this->party->address),
+                'contact_number'=>$this->party->contact_number,
+            ],
+            "cart"=>json_decode($this->cart),
+            "sr"=>$this->sr,
+            "van"=> $this->van_id,
+            "total"=> number_format($this->total, 2, '.', ''),
+            "created_at"=> Carbon::createFromFormat('Y-m-d H:i:s', $this->created_at)->setTimezone('Europe/London')->isoFormat('DD/MM/Y'),
+            "bank_visible"=>$this->bank,
+            "status"=>ucwords($this->status),
+            "purchase_order_id"=>$this->purchase_order_id,
         ];
+        return parent::toArray($request);
     }
 }

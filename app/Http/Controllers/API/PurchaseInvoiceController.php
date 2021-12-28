@@ -44,24 +44,43 @@ class PurchaseInvoiceController extends BaseController
 
             $count = $purchaseInvoices->get()->count();;
         }
-        return $this->sendResponse(PurchaseOrderResource::collection($purchaseInvoices->get()), 'Purchase Invoices retrieved successfully.');
+        return $this->sendResponse(PurchaseInvoiceResource::collection($purchaseInvoices->get()), 'Purchase Invoices retrieved successfully.');
     }
     public function revised_purchase_orders(Request $request)
     {
         $purchaseInvoices = PurchaseOrder::with("party")->where('id',$request->purchase_order_id)->get();
-        $purchaseInvoices = $purchaseInvoices->each(function ($purchaseInvoice, $index){
+        $oldPurchaseInvoice=PurchaseInvoice::where("purchase_order_id",$request->purchase_order_id)->orderBy("id","DESC")->first();
+        if($oldPurchaseInvoice!=null){
+            $oldPurchaseInvoice->cart=json_decode($oldPurchaseInvoice->cart);
+        }
+        $purchaseInvoices = $purchaseInvoices->each(function ($purchaseInvoice, $index) use($oldPurchaseInvoice){
             $purchaseInvoice->cart=json_decode($purchaseInvoice->cart);
             $purchaseInvoice->total = 0.00;
             foreach ($purchaseInvoice->cart as $key => $value) {
-                $sellCostPrice=SellCostPrice::where([
-                    ['item_id','=',$value->item_id],
-                    ['item_type','=',$value->type],
-                ])->orderBy('id', 'DESC')->first();
-                if(!isset($sellCostPrice)){
-                    $sellCostPrice=array(
-                        "cost_price"=>0.00,
-                        "price"=>0.00,
-                    );
+                 $sellCostPrice=array(
+                            "cost_price"=>0.00,
+                            "price"=>0.00,
+                        );
+                if($oldPurchaseInvoice==null){
+                    $sellCostPrice=SellCostPrice::where([
+                        ['item_id','=',$value->item_id],
+                        ['item_type','=',$value->type],
+                    ])->orderBy('id', 'DESC')->first();
+                    if(!isset($sellCostPrice)){
+                        $sellCostPrice=array(
+                            "cost_price"=>0.00,
+                            "price"=>0.00,
+                        );
+                    }
+                }else{
+                    foreach ($oldPurchaseInvoice->cart as $key_new => $value_new){
+                        if($value_new->type == $value->type && $value_new->item_id == $value->item_id){
+                           $sellCostPrice=array(
+                                "cost_price"=>(float)$value_new->cost_price,
+                                "price"=>(float)$value_new->price,
+                            ); 
+                        }
+                    }
                 }
                 $value->cost_price=number_format($sellCostPrice['cost_price'], 2, '.', '');
                 $value->price=number_format($sellCostPrice['price'], 2, '.', '');
@@ -75,7 +94,7 @@ class PurchaseInvoiceController extends BaseController
     }    
     public function purchase_order_reports(Request $request)
     {
-        $reports=PurchaseInvoice::with('party');
+        $reports=PurchaseInvoice::with('party')->where("status","active");
         if($request->get("filter")){
             $filter=json_decode($request->get("filter"));
             if(isset($filter->order_code))
@@ -123,12 +142,19 @@ class PurchaseInvoiceController extends BaseController
             ])->updateOrCreate(["cost_price"=>$value['cost_price'],"price"=>$value['price'],"item_id"=>$value['item_id'],"item_type"=>$value['type']]);
         }
         $input['cart']=json_encode($input['cart']);
+        $input['bank']=isset($input['bank'])&&$input['bank']=="Yes"?true:false;
+        // Inactive previous if available
+        PurchaseInvoice::where("purchase_order_id",$input['purchase_order_id'])->update(["status"=>"inactive"]);
+        $oldInvoice=PurchaseInvoice::where("purchase_order_id",$input['purchase_order_id'])->orderBy('id','DESC')->first();
+        if($oldInvoice!=null)
+            Transaction::where("purchase_invoice_id",$oldInvoice->id)->delete();
         $purchaseOrder = PurchaseInvoice::create($input);
         // ///// Create Transaction
+        $input['purchase_invoice_id']=$purchaseOrder->id;
         $input['amount']=(float)($input['total']);
         $input['party_id']=$input['party_id'];
         Transaction::create($input);
-        return $this->sendResponse(new PurchaseOrderResource($purchaseOrder), 'Purchase Invoice created successfully.');
+        return $this->sendResponse(new PurchaseInvoiceResource($purchaseOrder), 'Purchase Invoice created successfully.');
     } 
    
     /**

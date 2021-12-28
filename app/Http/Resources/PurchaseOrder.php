@@ -21,6 +21,8 @@ class PurchaseOrder extends JsonResource
             "party"=>[
                 'id'=>$this->party->id,
                 'business_name'=>ucwords($this->party->business_name),
+                'address'=>ucwords($this->party->address),
+                'contact_number'=>$this->party->contact_number,
             ],
             "cart"=>json_decode($this->cart),
             "sr"=>$this->sr,

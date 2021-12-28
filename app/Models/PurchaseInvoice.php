@@ -18,7 +18,10 @@ class PurchaseInvoice extends Model
         'party_id',
         'cart',
         'van_id',
-        'total'
+        'total',
+        'bank',
+        'purchase_order_id',
+        'status'
     ];
     public function party()
     {
