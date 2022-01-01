@@ -22,7 +22,7 @@ class PurchaseInvoiceController extends BaseController
      */
     public function index(Request $request)
     {
-        $purchaseInvoices = PurchaseInvoice::with("party");
+        $purchaseInvoices = PurchaseInvoice::with("party")->where("status","active");
         $count = $purchaseInvoices->get()->count();
         if($request->get("filter")){
             $filter=json_decode($request->get("filter"));
@@ -42,9 +42,13 @@ class PurchaseInvoiceController extends BaseController
                 $purchaseInvoices=$purchaseInvoices->whereDate('created_at','<=',$to)->whereDate('created_at','>=',$from);
             }
 
-            $count = $purchaseInvoices->get()->count();;
+            $count = $purchaseInvoices->get()->count();
         }
-        return $this->sendResponse(PurchaseInvoiceResource::collection($purchaseInvoices->get()), 'Purchase Invoices retrieved successfully.');
+        if($request->get("range")){
+            $range=json_decode($request->get("range"));
+            $purchaseInvoices=$purchaseInvoices->offset($range[0])->limit($range[1]-$range[0]+1);
+        }
+        return $this->sendResponse(PurchaseInvoiceResource::collection($purchaseInvoices->get()), 'Purchase Invoices retrieved successfully.',$count);
     }
     public function revised_purchase_orders(Request $request)
     {
@@ -95,6 +99,7 @@ class PurchaseInvoiceController extends BaseController
     public function purchase_order_reports(Request $request)
     {
         $reports=PurchaseInvoice::with('party')->where("status","active");
+        $count = $reports->get()->count();
         if($request->get("filter")){
             $filter=json_decode($request->get("filter"));
             if(isset($filter->order_code))
@@ -106,14 +111,20 @@ class PurchaseInvoiceController extends BaseController
             }
             if(isset($filter->party_id))
                 $reports=$reports->where('party_id',$filter->party_id);
+            $count = $reports->get()->count();
         }
         if($request->get("sort")){
             $sort=json_decode($request->get("sort"));
             $reports = $reports->orderBy($sort[0],$sort[1]);
         }
+        // return $request->get("range");
+        if($request->get("range")){
+            $range=json_decode($request->get("range"));
+            $reports=$reports->offset($range[0])->limit($range[1]-$range[0]+1);
+        }
         $reports=$reports->get();
         $reports=ReportResource::collection($reports);
-        return $this->sendResponse($reports, 'Orders retrieved successfully.');
+        return $this->sendResponse($reports, 'Orders retrieved successfully.',$count);
     }
     /**
      * Store a newly created resource in storage.
@@ -197,6 +208,7 @@ class PurchaseInvoiceController extends BaseController
      */
     public function destroy(PurchaseInvoice $purchaseInvoice)
     {
+        Transaction::where("purchase_invoice_id",$purchaseInvoice->id)->delete();
         $purchaseInvoice->delete();
         return $this->sendResponse([], 'Purchase Invoice deleted successfully.');
     }
