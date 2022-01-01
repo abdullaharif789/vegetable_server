@@ -18,6 +18,7 @@ class RegisterController extends BaseController
      *
      * @return \Illuminate\Http\Response
      */
+    private $superAdminUsername="superadmin";
     private $adminUsername="admin";
     public function register(Request $request)
     {
@@ -63,7 +64,7 @@ class RegisterController extends BaseController
      */
     public function login(Request $request)
     {
-        if($request->username==$this->adminUsername)
+        if($request->username==$this->adminUsername || $request->username==$this->superAdminUsername)
         {
            return $this->sendError('Unauthorised.', ['error'=>'Unauthorised'],401);
         }
@@ -117,7 +118,7 @@ class RegisterController extends BaseController
     }
     public function loginadmin(Request $request)
     {
-        if($request->username==$this->adminUsername)
+        if($request->username==$this->adminUsername || $request->username==$this->superAdminUsername)
         {
             if(Auth::attempt(['username' => $request->username,'password' => $request->password])){
                 $user = Auth::user();
@@ -128,6 +129,7 @@ class RegisterController extends BaseController
                 $success['username'] =  $user->username;
                 $success['email'] =  $user->email;
                 $success['user_id'] =  $user->id;
+                $success['role'] = $user->role;
                 return $this->sendResponse($success, 'Admin login successfully.');
             }
             else{
