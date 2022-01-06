@@ -12,7 +12,8 @@ use Validator;
 use App\Http\Resources\PurchaseInvoice as PurchaseInvoiceResource;
 use App\Http\Resources\PurchaseOrder as PurchaseOrderResource;
 use App\Http\Resources\PurchaseReport as ReportResource;
-   
+use Carbon\Carbon;   
+
 class PurchaseInvoiceController extends BaseController
 {
     /**
@@ -22,27 +23,46 @@ class PurchaseInvoiceController extends BaseController
      */
     public function index(Request $request)
     {
+        $route=\Request::route()->getName();
         $purchaseInvoices = PurchaseInvoice::with("party")->where("status","active");
         $count = $purchaseInvoices->get()->count();
         if($request->get("filter")){
             $filter=json_decode($request->get("filter"));
 
-            if(isset($filter->van))
-                $purchaseInvoices=$purchaseInvoices->where('van_id',$filter->van);
-
+            if($route != "daily_invoice_reports"){
+                if(isset($filter->van))
+                    $purchaseInvoices=$purchaseInvoices->where('van_id',$filter->van);
+            }
+            else{
+                if(isset($filter->van))
+                    $purchaseInvoices=$purchaseInvoices->where('van_id',$filter->van);
+                else
+                    $purchaseInvoices=$purchaseInvoices->where('van_id',"Van#1");
+            }
             if(isset($filter->party_id))
                 $purchaseInvoices=$purchaseInvoices->where('party_id',$filter->party_id);
 
             if(isset($filter->item_id))
                 $purchaseInvoices=$purchaseInvoices->whereJsonContains('cart', [['item_id' => $filter->item_id]]);
+            if($route != "daily_invoice_reports"){
+                if(isset($filter->start_date) || isset($filter->end_date)){
+                    $from=isset($filter->start_date)?date($filter->start_date):date('1990-01-01');
+                    $to=isset($filter->end_date)?date($filter->end_date):date('2099-01-01');
+                }
+            }else{
 
-            if(isset($filter->start_date) || isset($filter->end_date)){
-                $from=isset($filter->start_date)?date($filter->start_date):date('1990-01-01');
-                $to=isset($filter->end_date)?date($filter->end_date):date('2099-01-01');
-                $purchaseInvoices=$purchaseInvoices->whereDate('created_at','<=',$to)->whereDate('created_at','>=',$from);
+                if(isset($filter->current_date)){
+                    $purchaseInvoices=$purchaseInvoices->whereDate('created_at',$filter->current_date);
+                }else{
+                    $purchaseInvoices=$purchaseInvoices->whereDate('created_at', Carbon::today());
+                }
             }
 
             $count = $purchaseInvoices->get()->count();
+        }
+        if($request->get("sort")){
+            $sort=json_decode($request->get("sort"));
+            $purchaseInvoices = $purchaseInvoices->orderBy($sort[0],$sort[1]);
         }
         if($request->get("range")){
             $range=json_decode($request->get("range"));
