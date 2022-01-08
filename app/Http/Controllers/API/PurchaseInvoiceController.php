@@ -28,7 +28,6 @@ class PurchaseInvoiceController extends BaseController
         $count = $purchaseInvoices->get()->count();
         if($request->get("filter")){
             $filter=json_decode($request->get("filter"));
-
             if($route != "daily_invoice_reports"){
                 if(isset($filter->van))
                     $purchaseInvoices=$purchaseInvoices->where('van_id',$filter->van);
@@ -48,6 +47,7 @@ class PurchaseInvoiceController extends BaseController
                 if(isset($filter->start_date) || isset($filter->end_date)){
                     $from=isset($filter->start_date)?date($filter->start_date):date('1990-01-01');
                     $to=isset($filter->end_date)?date($filter->end_date):date('2099-01-01');
+                    $purchaseInvoices=$purchaseInvoices->whereDate('created_at','<=',$to)->whereDate('created_at','>=',$from);
                 }
             }else{
 
