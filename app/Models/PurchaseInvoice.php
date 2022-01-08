@@ -21,7 +21,8 @@ class PurchaseInvoice extends Model
         'total',
         'bank',
         'purchase_order_id',
-        'status'
+        'status',
+        'discount'
     ];
     public function party()
     {

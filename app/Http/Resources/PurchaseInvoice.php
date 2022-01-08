@@ -32,6 +32,9 @@ class PurchaseInvoice extends JsonResource
             "bank_visible"=>$this->bank,
             "status"=>ucwords($this->status),
             "purchase_order_id"=>$this->purchase_order_id,
+            "discount"=> ($this->discount * 100)."%",
+            "discount_amount"=>number_format($this->total*$this->discount, 2, '.', ''),
+            "total_with_discount"=> number_format($this->total + $this->total*$this->discount, 2, '.', '')
         ];
         return parent::toArray($request);
     }
