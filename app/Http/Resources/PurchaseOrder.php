@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 use Carbon\Carbon;
+use App\Models\Transaction;
 
 class PurchaseOrder extends JsonResource
 {
@@ -15,6 +16,7 @@ class PurchaseOrder extends JsonResource
      */
     public function toArray($request)
     {
+        $transactions=Transaction::where("party_id",$this->party_id)->where("paid",0)->get(["amount","date"]);
         return[
             'id'=>$this->id,
             "party_id"=>$this->party_id,
@@ -28,7 +30,8 @@ class PurchaseOrder extends JsonResource
             "sr"=>$this->sr,
             "van"=> $this->van_id,
             "total"=> number_format($this->total, 2, '.', ''),
-            "created_at"=> Carbon::createFromFormat('Y-m-d H:i:s', $this->created_at)->setTimezone('Europe/London')->isoFormat('DD/MM/Y')
+            "created_at"=> Carbon::createFromFormat('Y-m-d H:i:s', $this->created_at)->setTimezone('Europe/London')->isoFormat('DD/MM/Y'),
+            "transactions"=>$transactions
         ];
         return parent::toArray($request);
     }
