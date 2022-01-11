@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use Carbon\Carbon;
 
 class Report extends JsonResource
 {
@@ -37,7 +38,7 @@ class Report extends JsonResource
             'total_profit'=>number_format((float)$totalProfit, 2, '.', ''),
             'status'=>ucwords($this->status),
             'order_code'=>$this->order_code,
-            'created_at'=>$this->created_at,
+            'created_at'=>Carbon::createFromFormat('Y-m-d H:i:s', $this->created_at)->setTimezone('Europe/London')->isoFormat('DD/MM/Y, hh:mm:ss A'),
         ];
         return parent::toArray($request);
     }
