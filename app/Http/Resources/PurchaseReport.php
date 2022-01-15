@@ -21,7 +21,7 @@ class PurchaseReport extends JsonResource
         foreach($cart as $item){
             $item->tax=0;
             $totalQuantity+=$item->quantity;
-            $item->profit=($item->price-$item->cost_price) * $item->quantity;
+            $item->profit=((float)$item->price - (float)$item->cost_price) * (int)$item->quantity;
             $item->total_with_tax=number_format($item->quantity*$item->tax + $item->total, 2, '.', '');
             $totalProfit+=$item->profit;
             $item->profit=number_format((float)$item->profit, 2, '.', '');
