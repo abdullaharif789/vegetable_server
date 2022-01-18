@@ -17,7 +17,11 @@ class PurchaseOrder extends JsonResource
      */
     public function toArray($request)
     {
+        $transactions_total=0.0;
         $transactions=Transaction::where("party_id",$this->party_id)->where("paid",0)->get(["amount","date"]);
+        foreach ($transactions as $key => $value) {
+            $transactions_total+=(float)$value['amount'];
+        }
         return[
             'id'=>$this->id,
             "party_id"=>$this->party_id,
@@ -33,6 +37,7 @@ class PurchaseOrder extends JsonResource
             "total"=> number_format($this->total, 2, '.', ''),
             "created_at"=> Carbon::createFromFormat('Y-m-d H:i:s', $this->created_at)->setTimezone('Europe/London')->isoFormat('DD/MM/Y'),
             "transactions"=> TransactionResource::collection($transactions),
+            "transactions_total"=>$transactions_total
         ];
         return parent::toArray($request);
     }
