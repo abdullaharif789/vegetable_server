@@ -27,6 +27,7 @@ class RegisterController extends BaseController
             'email' => 'required|email|unique:users',
             'business_name' => 'required|unique:parties',
             'address' => 'required',
+            'password' => 'required',
             'contact_number' => 'required|unique:parties',
         ]);
         if($validator->fails()){
@@ -34,7 +35,7 @@ class RegisterController extends BaseController
         }
         $input = $request->all();
         //here password is 'root' -> in future the password is auto generated and then email.
-        $password=uniqid();
+        // $password=uniqid();
         $input['password'] = bcrypt($password);
         $input['name']=strtolower($input['name']);
         $input['username']=strtolower(explode('@', $input['email'])[0]);
@@ -53,7 +54,7 @@ class RegisterController extends BaseController
         $success['name'] =  ucwords($user->name);
         $success['username'] =  $user->username;
         $success['email'] =  $user->email;
-        (new MailController())->send_email(ucwords($input['name']),strtolower($input['email']),$password,$input['username']);
+        // (new MailController())->send_email(ucwords($input['name']),strtolower($input['email']),$password,$input['username']);
         return $this->sendResponse($success, 'User register successfully.');
     }
 
