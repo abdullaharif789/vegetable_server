@@ -36,7 +36,7 @@ class RegisterController extends BaseController
         $input = $request->all();
         //here password is 'root' -> in future the password is auto generated and then email.
         // $password=uniqid();
-        $input['password'] = bcrypt($password);
+        $input['password'] = bcrypt($input['password']);
         $input['name']=strtolower($input['name']);
         $input['username']=strtolower(explode('@', $input['email'])[0]);
         $user = User::create($input);
