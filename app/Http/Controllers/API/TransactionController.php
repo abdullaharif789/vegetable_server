@@ -34,7 +34,7 @@ class TransactionController extends BaseController
             if(isset($filter->party_id))
                 $transactions=$transactions->where('party_id',$filter->party_id);
             if(isset($filter->payment_alert))
-                $transactions=$transactions->where([['paid',0],['amount',">",300]])->orWhere([['paid',0],["created_at","<",date(strtotime("-2 week"))]]);
+                $transactions=$transactions->where([['paid',0],['amount',">",299]])->orWhere([['paid',0],["created_at","<",date(strtotime("-2 week"))]]);
             $count=$transactions->get()->count();
         }
         if($request->get("sort")){
