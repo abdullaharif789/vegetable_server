@@ -33,6 +33,8 @@ class TransactionController extends BaseController
                 $transactions=$transactions->where('date',"like","%".$filter->date."%");
             if(isset($filter->party_id))
                 $transactions=$transactions->where('party_id',$filter->party_id);
+            if(isset($filter->payment_alert))
+                $transactions=$transactions->where([['paid',0],['amount',">",300]])->orWhere([['paid',0],["created_at","<",date(strtotime("-2 week"))]]);
             $count=$transactions->get()->count();
         }
         if($request->get("sort")){
@@ -43,6 +45,7 @@ class TransactionController extends BaseController
             $range=json_decode($request->get("range"));
             $transactions=$transactions->offset($range[0])->limit($range[1]-$range[0]+1);
         }
+        dd($transactions->toSql());
         return $this->sendResponse(TransactionResource::collection($transactions->get()), 'Transactions retrieved successfully.',$count);
     }
     /**

@@ -52,3 +52,5 @@ Route::get('van_reports', [OrderController::class, 'all_orders']);
 /**/
 Route::resource('purchase_orders', PurchaseOrderController::class);
 Route::get('purchase_items', [PurchaseOrderController::class, 'purchase_items']);
+Route::get('purchase_order_costing', [PurchaseOrderController::class, 'purchase_order_costing']);
+Route::post('purchase_order_costing', [PurchaseOrderController::class, 'add_order_costing']);

@@ -6,8 +6,11 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\API\BaseController as BaseController;
 use App\Models\PurchaseOrder;
 use Validator;
+use App\Models\SellCostPrice;
 use DB;
+use Carbon\Carbon;   
 use App\Http\Resources\PurchaseOrder as PurchaseOrderResource;  
+
 class PurchaseOrderController extends BaseController
 {
     /**
@@ -81,6 +84,48 @@ class PurchaseOrderController extends BaseController
         });
         $collection=PurchaseOrderResource::collection($purchaseOrders);
         return $this->sendResponse($collection, 'Purchase Items retrieved successfully.',$count);
+    }
+    public function purchase_order_costing(Request $request){
+        $purchaseOrders = PurchaseOrder::with("party");
+        $count = $purchaseOrders->get()->count();
+        if($request->get("filter")){
+            $filter=json_decode($request->get("filter"));
+            if(isset($filter->current_date)){
+                $purchaseOrders=$purchaseOrders->whereDate('created_at',$filter->current_date);
+            }else{
+                $purchaseOrders=$purchaseOrders->whereDate('created_at', Carbon::today());
+            }
+            $count = $purchaseOrders->get()->count();
+        }
+        else{
+          $purchaseOrders=$purchaseOrders->whereDate('created_at', Carbon::today());  
+          $count = $purchaseOrders->get()->count();
+        }
+        if($request->get("sort")){
+            $sort=json_decode($request->get("sort"));
+            $purchaseOrders = $purchaseOrders->orderBy($sort[0],$sort[1]);
+        }
+        if($request->get("range")){
+            $range=json_decode($request->get("range"));
+            $purchaseOrders=$purchaseOrders->offset($range[0])->limit($range[1]-$range[0]+1);
+        }
+        $purchaseOrders = $purchaseOrders->get();
+        $purchaseOrders = $purchaseOrders->each(function ($purchaseOrder, $index) {
+            $purchaseOrder->sr = $index + 1;
+        });
+        $collection=PurchaseOrderResource::collection($purchaseOrders);
+        return $this->sendResponse($collection, 'Purchase Orders retrieved successfully.',$count);
+    }
+    public function add_order_costing(Request $request){
+        $input = $request->all();
+        $validator = Validator::make($input, [
+           'item_id' => 'required',
+           'cost' => 'required',
+           'item_type' => 'required',
+        ]);
+        $input['price']=0.0;
+        SellCostPrice::create($input);
+        return $this->sendResponse(array("message"=>"Cost updated."), 'Purchase Orders retrieved successfully.');
     }
     /**
      * Store a newly created resource in storage.
