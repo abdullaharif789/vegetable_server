@@ -45,7 +45,6 @@ class TransactionController extends BaseController
             $range=json_decode($request->get("range"));
             $transactions=$transactions->offset($range[0])->limit($range[1]-$range[0]+1);
         }
-        dd($transactions->toSql());
         return $this->sendResponse(TransactionResource::collection($transactions->get()), 'Transactions retrieved successfully.',$count);
     }
     /**
