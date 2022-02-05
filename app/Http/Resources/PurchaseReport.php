@@ -27,6 +27,7 @@ class PurchaseReport extends JsonResource
             $item->total_with_tax=number_format($item->quantity*$item->tax + $item->total, 2, '.', '');
             $totalProfit+=$item->profit;
             $item->profit=number_format((float)$item->profit, 2, '.', '');
+            $item->cost_price=number_format($item->cost_price, 2, '.', '');
         }
         return [
             'id'=>$this->id,
@@ -34,10 +35,14 @@ class PurchaseReport extends JsonResource
             'party_business_name'=>ucwords($this->party->business_name),
             'cart'=>$cart,
             'total_items'=>count($cart),
-            'total'=>number_format((float)$this->total, 2, '.', ''),
+            "discount"=> ($this->discount * 100)."%",
+            "discount_amount"=>number_format($this->total*$this->discount, 2, '.', ''),
+            "total"=> number_format($this->total - $this->total*$this->discount, 2, '.', ''),
+            "total_without_discount"=> number_format($this->total, 2, '.', ''),
             'total_tax'=>number_format((float)$this->total_tax, 2, '.', ''),
             'total_quantity'=>$totalQuantity,
-            'total_profit'=>number_format((float)$totalProfit, 2, '.', ''),
+            'profit'=>number_format((float)$totalProfit, 2, '.', ''),
+            'total_profit'=>number_format((float)$totalProfit - $this->total*$this->discount, 2, '.', ''),
             'created_at'=>Carbon::createFromFormat('Y-m-d H:i:s', $this->created_at)->setTimezone('Europe/London')->isoFormat('DD/MM/Y'),
         ];
         return parent::toArray($request);

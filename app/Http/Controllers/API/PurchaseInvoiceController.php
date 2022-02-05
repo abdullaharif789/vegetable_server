@@ -25,9 +25,6 @@ class PurchaseInvoiceController extends BaseController
     {
         $route=\Request::route()->getName();
         $purchaseInvoices = PurchaseInvoice::with("party")->where("status","active");
-        // if($route == "daily_invoice_reports"){
-        //     $purchaseInvoices = PurchaseOrder::with("party");
-        // }
         $count = $purchaseInvoices->get()->count();
         if($request->get("filter")){
             $filter=json_decode($request->get("filter"));
@@ -72,13 +69,6 @@ class PurchaseInvoiceController extends BaseController
             $purchaseInvoices=$purchaseInvoices->offset($range[0])->limit($range[1]-$range[0]+1);
         }
         return $this->sendResponse(PurchaseInvoiceResource::collection($purchaseInvoices->get()), 'Purchase Invoices retrieved successfully.',$count);
-        // if($route == "daily_invoice_reports"){
-        //     return $this->sendResponse(PurchaseOrderResource::collection($purchaseInvoices->get()), 'Purchase Invoices retrieved successfully.',$count);
-        // }
-        // else{
-        //     return $this->sendResponse(PurchaseInvoiceResource::collection($purchaseInvoices->get()), 'Purchase Invoices retrieved successfully.',$count);    
-        // }
-        
     }
     public function revised_purchase_orders(Request $request)
     {
