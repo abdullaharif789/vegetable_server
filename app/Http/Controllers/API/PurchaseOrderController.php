@@ -105,10 +105,6 @@ class PurchaseOrderController extends BaseController
             $sort=json_decode($request->get("sort"));
             $purchaseOrders = $purchaseOrders->orderBy($sort[0],$sort[1]);
         }
-        if($request->get("range")){
-            $range=json_decode($request->get("range"));
-            $purchaseOrders=$purchaseOrders->offset($range[0])->limit($range[1]-$range[0]+1);
-        }
         $purchaseOrders = $purchaseOrders->get();
         $purchaseOrders = $purchaseOrders->each(function ($purchaseOrder, $index) {
             $purchaseOrder->sr = $index + 1;

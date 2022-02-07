@@ -85,7 +85,7 @@ class PurchaseInvoiceController extends BaseController
                             "cost_price"=>0.00,
                             "price"=>0.00,
                         );
-                if($oldPurchaseInvoice==null){
+                // if($oldPurchaseInvoice==null){
                     $sellCostPrice=SellCostPrice::where([
                         ['item_id','=',$value->item_id],
                         ['item_type','=',$value->type],
@@ -96,16 +96,16 @@ class PurchaseInvoiceController extends BaseController
                             "price"=>0.00,
                         );
                     }
-                }else{
-                    foreach ($oldPurchaseInvoice->cart as $key_new => $value_new){
-                        if($value_new->type == $value->type && $value_new->item_id == $value->item_id){
-                           $sellCostPrice=array(
-                                "cost_price"=>(float)$value_new->cost_price,
-                                "price"=>(float)$value_new->price,
-                            ); 
-                        }
-                    }
-                }
+                // }else{
+                //     foreach ($oldPurchaseInvoice->cart as $key_new => $value_new){
+                //         if($value_new->type == $value->type && $value_new->item_id == $value->item_id){
+                //            $sellCostPrice=array(
+                //                 "cost_price"=>(float)$value_new->cost_price,
+                //                 "price"=>(float)$value_new->price,
+                //             ); 
+                //         }
+                //     }
+                // }
                 $value->cost_price=number_format($sellCostPrice['cost_price'], 2, '.', '');
                 $value->price=number_format($sellCostPrice['price'], 2, '.', '');
                 $tempTot = $sellCostPrice['price'] * $value->quantity;
