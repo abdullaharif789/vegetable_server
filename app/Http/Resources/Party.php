@@ -17,7 +17,7 @@ class Party extends JsonResource
         return [
             'id'=>$this->id,
             'user_id'=>$this->user_id,
-            'name'=>ucwords($this->user->name),
+            'name'=>utf8_encode(ucwords($this->user->name)),
             'email'=>$this->user->email,
             'avatar'=>$this->avatar,
             'business_name'=>ucwords($this->business_name),

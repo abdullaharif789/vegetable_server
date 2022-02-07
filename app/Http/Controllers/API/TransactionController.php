@@ -19,24 +19,16 @@ class TransactionController extends BaseController
      */
     public function index(Request $request)
     {
-        if($request->get("party_transactions_id")){
-            $party_id=$request->get("party_transactions_id");
-            $transactions = Transaction::where('party_id',$party_id);
-            if($request->get("payment_alert")){
-                $transactions=$transactions->where('paid',0)->where(
-                     function($query) {
-                         return $query
-                                ->where('amount',">",299)
-                                ->orWhere("created_at",">",date(strtotime("-2 week")));
-                        });
-            }
-            return $this->sendResponse(ETransactionResource::collection($transactions->get()), 'Transactions retrieved successfully.');
-        }
+        $party_id=$request->get("party_transactions_id");
         if($request->get("totalUnpaid")){
             $data=DB::select("SELECT sum(amount) as total FROM transactions WHERE paid=0");
             return $data[0]->total;
         }
-        $transactions = Transaction::with("party")->groupBy('party_id');
+        if(isset($party_id)){
+            $transactions = Transaction::with('party')->where('party_id',$party_id);
+        }else{
+            $transactions = Transaction::with("party")->groupBy('party_id');
+        }
         $count=$transactions->get()->count();
          if($request->get("filter")){
             $filter=json_decode($request->get("filter"));
@@ -46,26 +38,35 @@ class TransactionController extends BaseController
                 $transactions=$transactions->where('date',"like","%".$filter->date."%");
             if(isset($filter->party_id))
                 $transactions=$transactions->where('party_id',$filter->party_id);
-            if(isset($filter->payment_alert))
+            if(isset($filter->amount) && isset($filter->weeks)){
                 $transactions=$transactions->where('paid',0)->where(
-                     function($query) {
+                     function($query) use($filter) {
                          return $query
-                                ->where('amount',">",299)
-                                ->orWhere("created_at",">",date(strtotime("-2 week")));
+                                ->where('amount',">",$filter->amount)
+                                ->orWhere("created_at","<",date('Y-m-d',strtotime($filter->weeks)));
                         });
+            }else{
+                if(isset($filter->amount))
+                    $transactions=$transactions->where('paid',0)->where('amount','>',$filter->amount);
+                if(isset($filter->weeks))
+                    $transactions=$transactions->where('paid',0)->where("created_at","<",date('Y-m-d',strtotime($filter->weeks)));
+            }
             $count=$transactions->get()->count();
         }
         if($request->get("sort")){
             $sort=json_decode($request->get("sort"));
-            $transactions = $transactions->orderBy($sort[0],$sort[1]);
+            if(isset($sort[0]) && isset($sort[1]))
+                $transactions = $transactions->orderBy($sort[0],$sort[1]);
         }
         if($request->get("range")){
             $range=json_decode($request->get("range"));
             $transactions=$transactions->offset($range[0])->limit($range[1]-$range[0]+1);
         }
-        $transactions=$transactions->selectRaw('party_id,SUM(amount) as amount,date,created_at');
-        $transactions=$transactions->get();
-        return $this->sendResponse(TransactionResource::collection($transactions), 'Transactions retrieved successfully.',$count);
+        if(!isset($party_id)){
+            $transactions=$transactions->selectRaw('party_id,SUM(amount) as amount,date,created_at');
+            return $this->sendResponse(TransactionResource::collection($transactions->get()), 'Transactions retrieved successfully.',$count);
+        }
+        return $this->sendResponse(ETransactionResource::collection($transactions->get()), 'Transactions retrieved successfully.');
     }
     /**
      * Store a newly created resource in storage.

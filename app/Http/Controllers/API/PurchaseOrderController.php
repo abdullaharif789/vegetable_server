@@ -114,13 +114,14 @@ class PurchaseOrderController extends BaseController
     }
     public function add_order_costing(Request $request){
         $input = $request->all();
-        $validator = Validator::make($input, [
-           'item_id' => 'required',
-           'cost' => 'required',
-           'item_type' => 'required',
-        ]);
-        $input['price']=0.0;
-        SellCostPrice::create($input);
+        // return $input;
+        // $validator = Validator::make($input, [
+        //    'item_id' => 'required',
+        //    'cost' => 'required',
+        //    'item_type' => 'required',
+        // ]);
+        // $input['price']=0.0;
+        SellCostPrice::insert($input);
         return $this->sendResponse(array("message"=>"Cost updated."), 'Purchase Orders retrieved successfully.');
     }
     /**
