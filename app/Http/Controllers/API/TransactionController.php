@@ -20,12 +20,17 @@ class TransactionController extends BaseController
     public function index(Request $request)
     {
         if($request->get("party_transactions_id")){
-             $party_id=$request->get("party_transactions_id");
-                $transactions = Transaction::where('party_id',$party_id);
-                if($request->get("payment_alert")){
-                    $transactions=$transactions->where([['paid',0],['amount',">",299]])->orWhere([['paid',0],["created_at","<",date(strtotime("-2 week"))]]);
-                }
-                return $this->sendResponse(ETransactionResource::collection($transactions->get()), 'Transactions retrieved successfully.');
+            $party_id=$request->get("party_transactions_id");
+            $transactions = Transaction::where('party_id',$party_id);
+            if($request->get("payment_alert")){
+                $transactions=$transactions->where('paid',0)->where(
+                     function($query) {
+                         return $query
+                                ->where('amount',">",299)
+                                ->orWhere("created_at",">",date(strtotime("-2 week")));
+                        });
+            }
+            return $this->sendResponse(ETransactionResource::collection($transactions->get()), 'Transactions retrieved successfully.');
         }
         if($request->get("totalUnpaid")){
             $data=DB::select("SELECT sum(amount) as total FROM transactions WHERE paid=0");
@@ -42,7 +47,12 @@ class TransactionController extends BaseController
             if(isset($filter->party_id))
                 $transactions=$transactions->where('party_id',$filter->party_id);
             if(isset($filter->payment_alert))
-                $transactions=$transactions->where([['paid',0],['amount',">",299]])->orWhere([['paid',0],["created_at","<",date(strtotime("-2 week"))]]);
+                $transactions=$transactions->where('paid',0)->where(
+                     function($query) {
+                         return $query
+                                ->where('amount',">",299)
+                                ->orWhere("created_at",">",date(strtotime("-2 week")));
+                        });
             $count=$transactions->get()->count();
         }
         if($request->get("sort")){
