@@ -107,7 +107,7 @@ class TransactionController extends BaseController
             return $this->sendError('Transaction not found.');
         }
    
-        return $this->sendResponse(new TransactionResource($transaction), 'Transaction retrieved successfully.');
+        return $this->sendResponse(new ETransactionResource($transaction), 'Transaction retrieved successfully.');
     }
     
     /**
