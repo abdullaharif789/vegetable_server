@@ -79,7 +79,7 @@ class PurchaseInvoiceController extends BaseController
         }
         $purchaseInvoices = $purchaseInvoices->each(function ($purchaseInvoice, $index) use($oldPurchaseInvoice){
             $purchaseInvoice->cart=json_decode($purchaseInvoice->cart);
-            $purchaseInvoice->total = 0.00;
+            // $purchaseInvoice->total = 0.00;
             foreach ($purchaseInvoice->cart as $key => $value) {
                  $sellCostPrice=array(
                             "cost_price"=>0.00,
@@ -96,16 +96,14 @@ class PurchaseInvoiceController extends BaseController
                             "price"=>0.00,
                         );
                     }
-                // }else{
-                //     foreach ($oldPurchaseInvoice->cart as $key_new => $value_new){
-                //         if($value_new->type == $value->type && $value_new->item_id == $value->item_id){
-                //            $sellCostPrice=array(
-                //                 "cost_price"=>(float)$value_new->cost_price,
-                //                 "price"=>(float)$value_new->price,
-                //             ); 
-                //         }
-                //     }
-                // }
+                // }else
+                if($oldPurchaseInvoice!=null){
+                    foreach ($oldPurchaseInvoice->cart as $key_new => $value_new){
+                        if($value_new->type == $value->type && $value_new->item_id == $value->item_id){
+                           $sellCostPrice['price']=(float)$value_new->price;
+                        }
+                    }
+                }
                 $value->cost_price=number_format($sellCostPrice['cost_price'], 2, '.', '');
                 $value->price=number_format($sellCostPrice['price'], 2, '.', '');
                 $tempTot = $sellCostPrice['price'] * $value->quantity;
