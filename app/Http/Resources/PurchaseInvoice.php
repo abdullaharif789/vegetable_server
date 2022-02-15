@@ -21,6 +21,12 @@ class PurchaseInvoice extends JsonResource
         foreach ($transactions as $key => $value) {
             $transactions_total+=(float)$value['amount'];
         }
+        $total=0;
+        $cart=json_decode($this->cart);
+        foreach($cart as $item){
+            $total+=(float)$item->total;
+        }
+        $this->total=$total;
         return[
             'id'=>$this->id,
             "party_id"=>$this->party_id,
@@ -44,6 +50,5 @@ class PurchaseInvoice extends JsonResource
             "transactions"=> TransactionResource::collection($transactions),
             "transactions_total"=>$transactions_total
         ];
-        return parent::toArray($request);
     }
 }
