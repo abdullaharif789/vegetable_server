@@ -26,13 +26,15 @@ class PurchaseInvoiceController extends BaseController
         $route=\Request::route()->getName();
         $purchaseInvoices = PurchaseInvoice::with("party")->where("status","active");
         $count = $purchaseInvoices->get()->count();
-        $filter=false;
+        $filterFound=false;
         if($request->get("filter")){
-            $filter=true;
             $filter=json_decode($request->get("filter"));
             if($route != "daily_invoice_reports"){
                 if(isset($filter->van))
+                {
+                    $filterFound=true;
                     $purchaseInvoices=$purchaseInvoices->where('van_id',$filter->van);
+                }
             }
             else{
                 if(isset($filter->van))
@@ -51,6 +53,7 @@ class PurchaseInvoiceController extends BaseController
                 }
             }else{
                 if(isset($filter->current_date)){
+                    $filterFound=true;
                     $purchaseInvoices=$purchaseInvoices->whereDate('created_at',$filter->current_date);
                 }
             }
@@ -65,7 +68,7 @@ class PurchaseInvoiceController extends BaseController
             $range=json_decode($request->get("range"));
             $purchaseInvoices=$purchaseInvoices->offset($range[0])->limit($range[1]-$range[0]+1);
         }
-        if($filter==false && $route == "daily_invoice_reports"){
+        if($filterFound==false && $route == "daily_invoice_reports"){
             return $this->sendResponse(PurchaseInvoiceResource::collection([]), 'Purchase Invoices retrieved successfully.',0);    
         }
         return $this->sendResponse(PurchaseInvoiceResource::collection($purchaseInvoices->get()), 'Purchase Invoices retrieved successfully.',$count);
