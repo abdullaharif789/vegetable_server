@@ -18,6 +18,7 @@ class PurchaseReport extends JsonResource
         $cart=json_decode($this->cart);
         $totalQuantity=0;
         $totalProfit=0;
+        $total=0;
         foreach($cart as $item){
             $item->tax=0;
             $totalQuantity+=$item->quantity;
@@ -28,7 +29,9 @@ class PurchaseReport extends JsonResource
             $totalProfit+=$item->profit;
             $item->profit=number_format((float)$item->profit, 2, '.', '');
             $item->cost_price=number_format($item->cost_price, 2, '.', '');
+            $total+=(float)$item->total;
         }
+        $this->total=$total;
         return [
             'id'=>$this->id,
             'party_id'=>$this->party_id,

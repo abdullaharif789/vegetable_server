@@ -50,7 +50,6 @@ class PurchaseInvoiceController extends BaseController
                     $purchaseInvoices=$purchaseInvoices->whereDate('created_at','<=',$to)->whereDate('created_at','>=',$from);
                 }
             }else{
-
                 if(isset($filter->current_date)){
                     $purchaseInvoices=$purchaseInvoices->whereDate('created_at',$filter->current_date);
                 }else{

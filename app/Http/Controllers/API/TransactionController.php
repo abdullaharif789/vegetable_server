@@ -27,7 +27,7 @@ class TransactionController extends BaseController
         if(isset($party_id)){
             $transactions = Transaction::with('party')->where('party_id',$party_id);
         }else{
-            $transactions = Transaction::with("party")->groupBy('party_id');
+            $transactions = Transaction::with("party");
         }
         $count=$transactions->get()->count();
          if($request->get("filter")){
@@ -63,7 +63,7 @@ class TransactionController extends BaseController
             $transactions=$transactions->offset($range[0])->limit($range[1]-$range[0]+1);
         }
         if(!isset($party_id)){
-            $transactions=$transactions->selectRaw('party_id,SUM(amount) as amount,date,created_at');
+            $transactions=$transactions->groupBy('party_id')->selectRaw('party_id,SUM(amount) as amount,date,created_at');
             return $this->sendResponse(TransactionResource::collection($transactions->get()), 'Transactions retrieved successfully.',$count);
         }
         return $this->sendResponse(ETransactionResource::collection($transactions->get()), 'Transactions retrieved successfully.');
