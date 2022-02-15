@@ -22,6 +22,12 @@ class PurchaseOrder extends JsonResource
         foreach ($transactions as $key => $value) {
             $transactions_total+=(float)$value['amount'];
         }
+        $total=0;
+        $cart=json_decode($this->cart);
+        foreach($cart as $item){
+            $total+=(float)$item->total;
+        }
+        $this->total=$total;
         return[
             'id'=>$this->id,
             "party_id"=>$this->party_id,
@@ -31,7 +37,7 @@ class PurchaseOrder extends JsonResource
                 'address'=>ucwords($this->party->address),
                 'contact_number'=>$this->party->contact_number,
             ],
-            "cart"=>json_decode($this->cart),
+            "cart"=>$cart,
             "sr"=>$this->sr,
             "van"=> $this->van_id,
             "total"=> number_format($this->total, 2, '.', ''),
