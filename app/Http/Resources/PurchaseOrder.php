@@ -5,8 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Carbon\Carbon;
 use App\Models\Transaction;
-use App\Http\Resources\Transaction as TransactionResource;
-
+use App\Http\Resources\ETransaction as TransactionResource;
 class PurchaseOrder extends JsonResource
 {
     /**
@@ -18,11 +17,14 @@ class PurchaseOrder extends JsonResource
     public function toArray($request)
     {
         $transactions_total=0.0;
-        $transactions=Transaction::where("party_id",$this->party_id)->where("paid",0)->get(["amount","date"]);
+        $transactions=Transaction::where("party_id",$this->party_id)->where("paid",0)->get(["amount","date","purchase_invoice_id"]);
         $transactions= TransactionResource::collection($transactions);
-        foreach ($transactions as $key => $value) {
-            $transactions_total+=(float)$value['amount'];
+
+        $newTransaction=json_decode(json_encode($transactions));
+        foreach ($newTransaction as $key => $value) {
+            $transactions_total+=(float)$value->amount;
         }
+
         $total=0;
         $cart=json_decode($this->cart);
         foreach($cart as $item){
