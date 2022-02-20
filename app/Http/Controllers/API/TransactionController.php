@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use Illuminate\Http\Request;
 use App\Http\Controllers\API\BaseController as BaseController;
 use App\Models\Transaction;
+use App\Models\PurchaseInvoice;
 use Validator;
 use App\Http\Resources\Transaction as TransactionResource;
 use App\Http\Resources\ETransaction as ETransactionResource;
@@ -120,22 +121,14 @@ class TransactionController extends BaseController
     public function update(Request $request, Transaction $transaction)
     {
         $input = $request->all();
-        
         $validator = Validator::make($input, [
-            // 'party_id' => 'required',
-            'amount' => 'required',
-            'date'=> 'required',
+            'paid'=> 'required',
         ]);
-        
         if($validator->fails()){
             return $this->sendError('Validation Error.', $validator->errors());       
         }
-        // $transaction->party_id=$input['party_id'];
-        $transaction->date=date('Y-m-d h:i:s', strtotime($input['date']));
-        $transaction->amount=$input['amount'];
         $transaction->paid=isset($input['paid']) && $input['paid'] == "Paid"?1:0;
         $transaction->save();
-   
         return $this->sendResponse(new TransactionResource($transaction), 'Transaction updated successfully.');
     }
    

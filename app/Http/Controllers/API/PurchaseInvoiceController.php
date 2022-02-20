@@ -178,12 +178,16 @@ class PurchaseInvoiceController extends BaseController
         // Inactive previous if available
         PurchaseInvoice::where("purchase_order_id",$input['purchase_order_id'])->update(["status"=>"inactive"]);
         $oldInvoice=PurchaseInvoice::where("purchase_order_id",$input['purchase_order_id'])->orderBy('id','DESC')->first();
-        if($oldInvoice!=null)
+        if($oldInvoice!=null){
             Transaction::where("purchase_invoice_id",$oldInvoice->id)->delete();
+            $input['timestamps']=false;
+            $input['created_at']=$oldInvoice->created_at;
+            $input['updated_at']=$oldInvoice->created_at;
+        }
         $purchaseOrder = PurchaseInvoice::create($input);
         // ///// Create Transaction
         $input['purchase_invoice_id']=$purchaseOrder->id;
-        $input['amount']=(float)($input['total']);
+        $input['amount']=(float)($input['total'] - $input['total'] * $input['discount']);
         $input['party_id']=$input['party_id'];
         Transaction::create($input);
         return $this->sendResponse(new PurchaseInvoiceResource($purchaseOrder), 'Purchase Invoice created successfully.');
@@ -215,8 +219,8 @@ class PurchaseInvoiceController extends BaseController
      */
     public function update(Request $request, PurchaseInvoice $purchaseInvoice)
     {
-        $input = $request->all();
-        $purchaseInvoice->save();
+        // $input = $request->all();
+        // $purchaseInvoice->save();
    
         return $this->sendResponse(new PurchaseInvoiceResource($purchaseInvoice), 'Purchase Invoice updated successfully.');
     }
