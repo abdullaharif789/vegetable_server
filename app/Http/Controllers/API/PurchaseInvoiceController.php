@@ -82,7 +82,7 @@ class PurchaseInvoiceController extends BaseController
         }
         $purchaseInvoices = $purchaseInvoices->each(function ($purchaseInvoice, $index) use($oldPurchaseInvoice){
             $purchaseInvoice->cart=json_decode($purchaseInvoice->cart);
-            // $purchaseInvoice->total = 0.00;
+            $purchaseInvoice->total = 0.00;
             foreach ($purchaseInvoice->cart as $key => $value) {
                  $sellCostPrice=array(
                             "cost_price"=>0.00,
@@ -109,7 +109,7 @@ class PurchaseInvoiceController extends BaseController
                 }
                 $value->cost_price=number_format($sellCostPrice['cost_price'], 2, '.', '');
                 $value->price=number_format($sellCostPrice['price'], 2, '.', '');
-                $tempTot = $sellCostPrice['price'] * $value->quantity;
+                $tempTot = (float)$sellCostPrice['price'] * (float)$value->quantity;
                 $purchaseInvoice->total += $tempTot;
                 $value->total=number_format($tempTot, 2, '.', '');
             }

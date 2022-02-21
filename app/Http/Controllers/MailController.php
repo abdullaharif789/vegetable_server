@@ -16,6 +16,7 @@ class MailController extends Controller {
         $this->to=$to;
         $this->name=$name;
         $data = array('name'=>$this->name,'email'=>$to,'password'=>$password,'username'=>$username);
+        // dd($data);
         $mail=Mail::send('mail', $data, function($message) {
             $message->to($this->to, $this->name)->subject('Congratulations! for joining '.$this->company.' 👏');
             $message->from($this->from,$this->company);
