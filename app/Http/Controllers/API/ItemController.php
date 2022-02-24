@@ -130,7 +130,6 @@ class ItemController extends BaseController
     public function destroy(Item $item)
     {
         $item->delete();
-   
         return $this->sendResponse([], 'Item deleted successfully.');
     }
 }
