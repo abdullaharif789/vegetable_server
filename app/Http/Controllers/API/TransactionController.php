@@ -123,11 +123,22 @@ class TransactionController extends BaseController
         $input = $request->all();
         $validator = Validator::make($input, [
             'paid'=> 'required',
+            'amount'=> 'required',
         ]);
         if($validator->fails()){
             return $this->sendError('Validation Error.', $validator->errors());       
         }
         $transaction->paid=isset($input['paid']) && $input['paid'] == "Paid"?1:0;
+        $totalAmount=$transaction->amount;
+        $givenAmount=$input['amount'];
+        if($givenAmount >= $totalAmount){
+            $givenAmount = $totalAmount;
+        }else{
+            $input['paid']=1;
+            Transaction::create($input);
+            $givenAmount=$totalAmount-$givenAmount;
+        }
+        $transaction->amount=$givenAmount;
         $transaction->save();
         return $this->sendResponse(new TransactionResource($transaction), 'Transaction updated successfully.');
     }
