@@ -18,7 +18,7 @@ class PartyController extends BaseController
      */
     public function index(Request $request)
     {
-        $parties = Party::with('user');
+        $parties = Party::with('user')->where("visible","1");
         $count=$parties->get()->count();
         if($request->get('filter')){
             $filter=json_decode($request->get("filter"));
@@ -47,7 +47,7 @@ class PartyController extends BaseController
      */
     public function purchase_items(Request $request)
     {
-        $parties = Party::with('user');
+        $parties = Party::with('user')->where("visible","1");;
         $count=$parties->get()->count();
         if($request->get('filter')){
             $filter=json_decode($request->get("filter"));
@@ -88,7 +88,7 @@ class PartyController extends BaseController
      */
     public function show($id)
     {
-        $party = Party::find($id);
+        $party = Party::where("visible","1")->find($id);
   
         if (is_null($party)) {
             return $this->sendError('Party not found.');
@@ -132,8 +132,9 @@ class PartyController extends BaseController
      */
     public function destroy(Party $party)
     {
-        DB::table('users')->where('id',$party->user_id)->delete();
-        $party->delete();
+        // DB::table('users')->where('id',$party->user_id)->delete();
+        // $party->delete();
+        DB::table('parties')->where('id',$party->id)->update(["visible"=>"0"]);
         return $this->sendResponse([], 'Party deleted successfully.');
     }
 }

@@ -78,7 +78,7 @@ class RegisterController extends BaseController
                 $success['name'] =  ucwords($user->name);
                 $success['email'] =  $user->email;
                 $success['username'] =  $user->username;
-                $party =  Party::where('user_id',$user->id)->first();
+                $party =  Party::where('user_id',$user->id)->where("visible","1")->first();
                 if($party->active==0){
                     return $this->sendError('Inactive user.', ['error'=>'Inactive user.'],417);
                 }
