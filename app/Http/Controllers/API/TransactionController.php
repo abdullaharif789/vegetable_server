@@ -135,6 +135,7 @@ class TransactionController extends BaseController
             $givenAmount = $totalAmount;
         }else{
             $input['paid']=1;
+            $input['date']=$input['new_date'];
             Transaction::create($input);
             $givenAmount=$totalAmount-$givenAmount;
         }
