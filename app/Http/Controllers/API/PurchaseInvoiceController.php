@@ -1,7 +1,7 @@
 <?php
-   
+
 namespace App\Http\Controllers\API;
-   
+
 use Illuminate\Http\Request;
 use App\Http\Controllers\API\BaseController as BaseController;
 use App\Models\PurchaseInvoice;
@@ -12,7 +12,6 @@ use Validator;
 use App\Http\Resources\PurchaseInvoice as PurchaseInvoiceResource;
 use App\Http\Resources\PurchaseOrder as PurchaseOrderResource;
 use App\Http\Resources\PurchaseReport as ReportResource;
-use Carbon\Carbon;   
 
 class PurchaseInvoiceController extends BaseController
 {
@@ -69,7 +68,7 @@ class PurchaseInvoiceController extends BaseController
             $purchaseInvoices=$purchaseInvoices->offset($range[0])->limit($range[1]-$range[0]+1);
         }
         if($filterFound==false && $route == "daily_invoice_reports"){
-            return $this->sendResponse(PurchaseInvoiceResource::collection([]), 'Purchase Invoices retrieved successfully.',0);    
+            return $this->sendResponse(PurchaseInvoiceResource::collection([]), 'Purchase Invoices retrieved successfully.',0);
         }
         return $this->sendResponse(PurchaseInvoiceResource::collection($purchaseInvoices->get()), 'Purchase Invoices retrieved successfully.',$count);
     }
@@ -116,7 +115,7 @@ class PurchaseInvoiceController extends BaseController
             $purchaseInvoice->cart=json_encode($purchaseInvoice->cart);
         });
         return $this->sendResponse(PurchaseOrderResource::collection($purchaseInvoices), 'Purchase Invoices retrieved successfully.');
-    }    
+    }
     public function purchase_order_reports(Request $request)
     {
         $reports=PurchaseInvoice::with('party')->where("status","active");
@@ -162,9 +161,9 @@ class PurchaseInvoiceController extends BaseController
            'van_id' => 'required',
            'total' => 'required',
         ]);
-       
+
         if($validator->fails()){
-            return $this->sendError('Validation Error.', $validator->errors());       
+            return $this->sendError('Validation Error.', $validator->errors());
         }
         /// Add Sell and cost updated prices
         foreach ($input['cart'] as $key => $value) {
@@ -191,8 +190,8 @@ class PurchaseInvoiceController extends BaseController
         $input['party_id']=$input['party_id'];
         Transaction::create($input);
         return $this->sendResponse(new PurchaseInvoiceResource($purchaseOrder), 'Purchase Invoice created successfully.');
-    } 
-   
+    }
+
     /**
      * Display the specified resource.
      *
@@ -202,14 +201,14 @@ class PurchaseInvoiceController extends BaseController
     public function show($id)
     {
         $purchaseInvoice = PurchaseInvoice::find($id);
-  
+
         if (is_null($purchaseInvoice)) {
             return $this->sendError('PurchaseInvoice not found.');
         }
-   
+
         return $this->sendResponse(new PurchaseInvoiceResource($purchaseInvoice), 'Purchase Invoice retrieved successfully.');
     }
-    
+
     /**
      * Update the specified resource in storage.
      *
@@ -221,10 +220,10 @@ class PurchaseInvoiceController extends BaseController
     {
         // $input = $request->all();
         // $purchaseInvoice->save();
-   
+
         return $this->sendResponse(new PurchaseInvoiceResource($purchaseInvoice), 'Purchase Invoice updated successfully.');
     }
-   
+
     /**
      * Remove the specified resource from storage.
      *

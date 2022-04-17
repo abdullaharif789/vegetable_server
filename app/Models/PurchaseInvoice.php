@@ -12,7 +12,7 @@ class PurchaseInvoice extends Model
     /**
      * The attributes that are mass assignable.
      *
-     * @var array
+     * @var arrays
      */
     protected $fillable = [
         'party_id',
@@ -22,7 +22,8 @@ class PurchaseInvoice extends Model
         'bank',
         'purchase_order_id',
         'status',
-        'discount'
+        'discount',
+        'created_at'
     ];
     public function party()
     {

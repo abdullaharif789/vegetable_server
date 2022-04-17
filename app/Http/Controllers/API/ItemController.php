@@ -1,7 +1,7 @@
 <?php
-   
+
 namespace App\Http\Controllers\API;
-   
+
 use Illuminate\Http\Request;
 use App\Http\Controllers\API\BaseController as BaseController;
 use App\Models\Item;
@@ -46,7 +46,7 @@ class ItemController extends BaseController
             // 'image'=> 'required',
         ]);
         if($validator->fails()){
-            return $this->sendError('Validation Error.', $validator->errors());       
+            return $this->sendError('Validation Error.', $validator->errors());
         }
         //Copy Image
         if($request->image){
@@ -59,7 +59,7 @@ class ItemController extends BaseController
             file_put_contents('storage/items/'.$newName, $image);
         }
         else{
-          $newName="https://via.placeholder.com/200/000000/FFF?text=".ucwords($input['name']);  
+          $newName="https://via.placeholder.com/200/000000/FFF?text=".ucwords($input['name']);
         }
         //End Copy Image
         $input['name']=strtolower($input['name']);
@@ -68,8 +68,8 @@ class ItemController extends BaseController
         $input['image']=$newName;//
         $item = Item::create($input);
         return $this->sendResponse(new ItemResource($item), 'Item created successfully.');
-    } 
-   
+    }
+
     /**
      * Display the specified resource.
      *
@@ -84,7 +84,7 @@ class ItemController extends BaseController
         }
         return $this->sendResponse(new ItemResource($item), 'Item retrieved successfully.');
     }
-    
+
     /**
      * Update the specified resource in storage.
      *
@@ -100,7 +100,7 @@ class ItemController extends BaseController
             'category_id' => 'required'
         ]);
         if($validator->fails()){
-            return $this->sendError('Validation Error.', $validator->errors());       
+            return $this->sendError('Validation Error.', $validator->errors());
         }
         if (!(strpos($request->image, 'storage') !== false)) {
             $image = $request->image;
@@ -120,7 +120,7 @@ class ItemController extends BaseController
         $item->save();
         return $this->sendResponse(new ItemResource($item), 'Item updated successfully.');
     }
-   
+
     /**
      * Remove the specified resource from storage.
      *
