@@ -9,6 +9,7 @@ use App\Models\PurchaseOrder;
 use App\Models\SellCostPrice;
 use App\Models\Transaction;
 use Validator;
+use DB;
 use App\Http\Resources\PurchaseInvoice as PurchaseInvoiceResource;
 use App\Http\Resources\PurchaseOrder as PurchaseOrderResource;
 use App\Http\Resources\PurchaseReport as ReportResource;
@@ -175,21 +176,36 @@ class PurchaseInvoiceController extends BaseController
         $input['cart']=json_encode($input['cart']);
         $input['bank']=isset($input['bank'])&&$input['bank']=="Yes"?true:false;
         // Inactive previous if available
-        PurchaseInvoice::where("purchase_order_id",$input['purchase_order_id'])->update(["status"=>"inactive"]);
-        $oldInvoice=PurchaseInvoice::where("purchase_order_id",$input['purchase_order_id'])->orderBy('id','DESC')->first();
-        if($oldInvoice!=null){
-            Transaction::where("purchase_invoice_id",$oldInvoice->id)->delete();
-            $input['timestamps']=false;
-            $input['created_at']=$oldInvoice->created_at;
-            $input['updated_at']=$oldInvoice->created_at;
+        DB::beginTransaction();
+        try {
+            DB::table('purchase_invoices')->where("purchase_order_id",$input['purchase_order_id'])->update(["status"=>"inactive"]);
+            $oldInvoice=PurchaseInvoice::where("purchase_order_id",$input['purchase_order_id'])->orderBy('id','DESC')->first();
+            $current = date('Y-m-d H:i:s');
+            $input['created_at']=$current;
+            $input['updated_at']=$current;
+            if($oldInvoice!=null){
+                Transaction::where("purchase_invoice_id",$oldInvoice->id)->delete();
+                $input['created_at']=$oldInvoice->created_at;
+                $input['updated_at']=$oldInvoice->created_at;
+            }
+            DB::table('purchase_invoices')->insert($input);
+            $purchaseOrder=PurchaseInvoice::orderBy("id","DESC")->first();
+
+            // ///// Create Transaction
+            $transaction['party_id']=$input['party_id'];
+            $transaction['amount']=(float)($input['total'] - $input['total'] * $input['discount']);
+            $transaction['purchase_invoice_id']=$purchaseOrder->id;
+            $transaction['created_at']=$current;
+            $transaction['updated_at']=$current;
+            $transaction['date']=$current;
+            DB::table('transactions')->insert($transaction);
+            DB::commit();
+            return $this->sendResponse(new PurchaseInvoiceResource($purchaseOrder), 'Purchase Invoice created successfully.');
         }
-        $purchaseOrder = PurchaseInvoice::create($input);
-        // ///// Create Transaction
-        $input['purchase_invoice_id']=$purchaseOrder->id;
-        $input['amount']=(float)($input['total'] - $input['total'] * $input['discount']);
-        $input['party_id']=$input['party_id'];
-        Transaction::create($input);
-        return $this->sendResponse(new PurchaseInvoiceResource($purchaseOrder), 'Purchase Invoice created successfully.');
+        catch (\Exception $e) {
+            DB::rollback();
+            return $this->sendError("Some error occured while creating purchase invoice and transaction.");
+        }
     }
 
     /**
