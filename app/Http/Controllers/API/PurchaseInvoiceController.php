@@ -138,7 +138,6 @@ class PurchaseInvoiceController extends BaseController
             $sort=json_decode($request->get("sort"));
             $reports = $reports->orderBy($sort[0],$sort[1]);
         }
-        // return $request->get("range");
         if($request->get("range")){
             $range=json_decode($request->get("range"));
             $reports=$reports->offset($range[0])->limit($range[1]-$range[0]+1);

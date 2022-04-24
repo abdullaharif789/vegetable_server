@@ -24,6 +24,7 @@ class ETransaction extends JsonResource
             'paid_boolean'=>$this->paid?true:false,
             'paid'=>$this->paid?"Paid":"Unpaid",
             "purchase_invoice_id"=>$this->purchase_invoice_id,
+            "custom_purchase_invoice_id"=>$this->custom_purchase_invoice_id,
             "date"=>Carbon::createFromFormat('Y-m-d H:i:s', $this->date)->setTimezone('Europe/London')->isoFormat('DD/MM/Y'),
             "new_date"=>Carbon::createFromFormat('Y-m-d H:i:s', $this->date)->setTimezone('Europe/London'),
         ];

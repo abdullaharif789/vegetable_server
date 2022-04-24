@@ -14,7 +14,8 @@ class Transaction extends Model
       'amount',
       'paid',
       'date',
-      'purchase_invoice_id'
+      'purchase_invoice_id',
+      'custom_purchase_invoice_id'
     ];
     public function party()
     {

@@ -1,7 +1,7 @@
 <?php
-   
+
 namespace App\Http\Controllers\API;
-   
+
 use Illuminate\Http\Request;
 use App\Http\Controllers\API\BaseController as BaseController;
 use App\Models\Transaction;
@@ -88,12 +88,20 @@ class TransactionController extends BaseController
             return $this->sendError('Validation Error.', $validator->errors());
         }
 
+        $custom_purchase_invoice_id=$input['custom_purchase_invoice_id'];
+        if($custom_purchase_invoice_id){
+            $custom_transaction=PurchaseInvoice::where("id",$custom_purchase_invoice_id)->first();
+            if(!$custom_transaction){
+                return $this->sendError('Please enter valid purchase invoice#.');
+            }
+        }
+
         $input['paid']=isset($input['paid']) && $input['paid'] == "paid"?1:0;
         $transaction = Transaction::create($input);
         $transaction['date']=date('Y-m-d h:i:s', strtotime($transaction['date']));
         return $this->sendResponse(new TransactionResource($transaction), 'Transaction created successfully.');
-    } 
-   
+    }
+
     /**
      * Display the specified resource.
      *
@@ -103,14 +111,14 @@ class TransactionController extends BaseController
     public function show($id)
     {
         $transaction = Transaction::find($id);
-  
+
         if (is_null($transaction)) {
             return $this->sendError('Transaction not found.');
         }
-   
+
         return $this->sendResponse(new ETransactionResource($transaction), 'Transaction retrieved successfully.');
     }
-    
+
     /**
      * Update the specified resource in storage.
      *
@@ -126,9 +134,17 @@ class TransactionController extends BaseController
             'amount'=> 'required',
         ]);
         if($validator->fails()){
-            return $this->sendError('Validation Error.', $validator->errors());       
+            return $this->sendError('Validation Error.', $validator->errors());
+        }
+        $custom_purchase_invoice_id=$input['custom_purchase_invoice_id'];
+        if($custom_purchase_invoice_id){
+            $custom_transaction=PurchaseInvoice::where("id",$custom_purchase_invoice_id)->first();
+            if(!$custom_transaction){
+                return $this->sendError('Please enter valid purchase invoice#.');
+            }
         }
         $transaction->paid=isset($input['paid']) && $input['paid'] == "Paid"?1:0;
+        $transaction->custom_purchase_invoice_id=$custom_purchase_invoice_id;
         $totalAmount=$transaction->amount;
         $givenAmount=$input['amount'];
         if($givenAmount >= $totalAmount){
@@ -143,7 +159,7 @@ class TransactionController extends BaseController
         $transaction->save();
         return $this->sendResponse(new TransactionResource($transaction), 'Transaction updated successfully.');
     }
-   
+
     /**
      * Remove the specified resource from storage.
      *
@@ -153,7 +169,7 @@ class TransactionController extends BaseController
     public function destroy(Transaction $transaction)
     {
         $transaction->delete();
-   
+
         return $this->sendResponse([], 'Transaction deleted successfully.');
     }
 }

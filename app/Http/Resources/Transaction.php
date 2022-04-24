@@ -21,6 +21,7 @@ class Transaction extends JsonResource
             "amount"=>number_format($this->amount, 2, '.', ','),
             'paid_boolean'=>$this->paid?true:false,
             "purchase_invoice_id"=>$this->purchase_invoice_id,
+            "custom_purchase_invoice_id"=>$this->custom_purchase_invoice_id,
             'paid'=>$this->paid?"Paid":"Unpaid",
             "date"=>Carbon::createFromFormat('Y-m-d H:i:s', $this->date)->setTimezone('Europe/London')
         ];
