@@ -17,7 +17,7 @@ class Expense extends JsonResource
         return [
             "id"=>$this->id,
             'type'=>$this->type,
-            'amount'=>$this->amount,
+            'amount'=>(float)$this->amount,
             "date"=>Carbon::createFromFormat('Y-m-d H:i:s', $this->date)->setTimezone('Europe/London')->isoFormat('DD/MM/Y'),
             "created_at"=>Carbon::createFromFormat('Y-m-d H:i:s', $this->created_at)->setTimezone('Europe/London')->isoFormat('DD/MM/Y'),
         ];
