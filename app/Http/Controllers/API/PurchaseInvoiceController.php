@@ -125,6 +125,8 @@ class PurchaseInvoiceController extends BaseController
             $filter=json_decode($request->get("filter"));
             if(isset($filter->order_code))
                 $reports=$reports->where('order_code','like',"%".strtoupper($filter->order_code)."%");
+            if(isset($filter->van))
+                $reports=$reports->where('van_id',$filter->van);
             if(isset($filter->start_date) || isset($filter->end_date)){
                 $from=isset($filter->start_date)?date($filter->start_date):date('1990-01-01');
                 $to=isset($filter->end_date)?date($filter->end_date):date('2099-01-01');
