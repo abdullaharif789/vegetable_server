@@ -73,6 +73,22 @@ class PurchaseInvoiceController extends BaseController
         }
         return $this->sendResponse(PurchaseInvoiceResource::collection($purchaseInvoices->get()), 'Purchase Invoices retrieved successfully.',$count);
     }
+    public function send_invoice_email(Request $request){
+        $input = $request->all();
+        $message = $input['invoice_message'];
+        $to = $input['email'] ? $input['email'] : "abdullaharif789@gmail.com";
+        $subject="Invoice from EveryDayFreshFood";
+        $from = "invoices@everydayfreshfood.com";
+        $headers = "MIME-Version: 1.0" . "\r\n";
+        $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
+        $headers .= "From: $from";
+        if(mail($to,$subject,$message,$headers)){
+            return $this->sendResponse('Invoice sent successfully.',null);
+        }
+        else{
+            return $this->sendResponse('Sorry, Invoice sent unsuccessfully. Please try later.',null);
+        }
+    }
     public function revised_purchase_orders(Request $request)
     {
         $purchaseInvoices = PurchaseOrder::with("party")->where('id',$request->purchase_order_id)->get();
