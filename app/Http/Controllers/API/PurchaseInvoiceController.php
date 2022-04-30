@@ -77,12 +77,12 @@ class PurchaseInvoiceController extends BaseController
     public function send_invoice_email(Request $request){
         $input = $request->all();
 
-        $message = $input['invoice_message'];
+        $message = "Body Message";
 
         $pdf = App::make('dompdf.wrapper');
         $pdf->loadHTML($message);
         $invoice = $pdf->stream('invoice.pdf');
-        $content = chunk_split(base64_encode($invoice));
+        $content = chunk_split(base64_encode("1234"));
 
         $separator = md5(time());
         $eol = "\r\n";
@@ -111,10 +111,12 @@ class PurchaseInvoiceController extends BaseController
         $body .= $content . $eol;
         $body .= "--" . $separator . "--";
 
-        if(mail($to,$subject,$message,$headers)){
+        $response=mail($to,$subject,$body,$headers);
+        if($response){
             return $this->sendResponse('Invoice sent successfully.',null);
         }
         else{
+            print_r( error_get_last() );
             return $this->sendResponse('Sorry, Invoice sent unsuccessfully. Please try later.',null);
         }
     }
