@@ -94,7 +94,6 @@ class PurchaseInvoiceController extends BaseController
         $mail->Subject = "Invoice - EveryDayFreshFood";
         $mail->Body    = $body;
 
-        @unlink($invoice_path);
         if($mail->send()) {
              return $this->sendResponse('Invoice sent successfully.',null);
         }
