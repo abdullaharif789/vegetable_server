@@ -86,7 +86,6 @@ class PurchaseInvoiceController extends BaseController
 
         $mail->setFrom('invoice@everydayfreshfood.com', 'EveryDay Fresh Food');
         $mail->addAddress($request->email);
-        $mail->addAddress("everydayfreshfood007@gmail.com");
 
         $mail->AddAttachment($invoice_path,"invoice_".$invoice_path);
 
@@ -95,13 +94,13 @@ class PurchaseInvoiceController extends BaseController
         $mail->Subject = "Invoice - EveryDayFreshFood";
         $mail->Body    = $body;
 
+        @unlink($invoice_path);
         if($mail->send()) {
              return $this->sendResponse('Invoice sent successfully.',null);
         }
         else {
             return $this->sendResponse('Sorry, Invoice sent unsuccessfully. Please try later.',null);
         }
-        unlink($invoice_path);
     }
     public function revised_purchase_orders(Request $request)
     {
