@@ -17,7 +17,7 @@ class ExpenseController extends BaseController
      */
     public function index(Request $request)
     {
-        $expenses = Expense::where("id",">",0);
+        $expenses = Expense::with("expense_type");
         $count=$expenses->get()->count();
         if($request->get('dates')){
             $dates=explode(",",$request->get('dates'));
@@ -25,11 +25,11 @@ class ExpenseController extends BaseController
         }
         if($request->get('filter')){
             $filter=json_decode($request->get("filter"));
-            if(isset($filter->type)){
-                $expenses=$expenses->where('type','like',"%".strtolower($filter->type)."%");
+            if(isset($filter->expense_type)){
+                $expenses=$expenses->where('expense_type_id', $filter->expense_type);
             }
             if(isset($filter->date)){
-                $expenses=$expenses->where('date',$filter->date);
+                $expenses=$expenses->whereDate('date',$filter->date);
             }
             $count=$expenses->get()->count();
         }
@@ -53,17 +53,18 @@ class ExpenseController extends BaseController
     {
         $input = $request->all();
         $validator = Validator::make($input, [
-            'date' => 'required',
-            'type' => 'required',
-            'amount' => 'required|numeric',
+            'expenses' => 'required|array',
         ]);
-
         if($validator->fails()){
             return $this->sendError('Validation Error.', $validator->errors());
         }
 
-        $expense = Expense::create($input);
-        return $this->sendResponse(($expense), 'Expense created successfully.');
+        $expenses=$input['expenses'];
+        foreach($expenses as $expense){
+            $expense['date']=date("Y-m-d",strtotime($expense['date']));
+            Expense::create($expense);
+        }
+        return $this->sendResponse(null, 'Expenses created successfully.');
     }
 
     /**

@@ -88,8 +88,8 @@ class TransactionController extends BaseController
             return $this->sendError('Validation Error.', $validator->errors());
         }
 
-        $custom_purchase_invoice_id=$input['custom_purchase_invoice_id'];
-        if($custom_purchase_invoice_id){
+        if(isset($input['custom_purchase_invoice_id'])){
+            $custom_purchase_invoice_id=$input['custom_purchase_invoice_id'];
             $custom_transaction=PurchaseInvoice::where("id",$custom_purchase_invoice_id)->first();
             if(!$custom_transaction){
                 return $this->sendError('Please enter valid purchase invoice#.');

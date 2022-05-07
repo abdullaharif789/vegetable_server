@@ -14,6 +14,7 @@ use App\Http\Controllers\API\PurchaseOrderController;
 use App\Http\Controllers\API\InvoiceController;
 use App\Http\Controllers\API\CategoryController;
 use App\Http\Controllers\API\ExpenseController;
+use App\Http\Controllers\API\ExpenseTypeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -37,6 +38,7 @@ Route::resource('parties', PartyController::class);
 Route::resource('transactions', TransactionController::class);
 Route::resource('categories', CategoryController::class);
 Route::resource('expenses', ExpenseController::class);
+Route::resource('expense_types', ExpenseTypeController::class);
 Route::resource('inventories', InventoryController::class);
 Route::resource('purchase_invoices', PurchaseInvoiceController::class);
 Route::resource('items', ItemController::class);
@@ -54,6 +56,7 @@ Route::get('van_reports', [OrderController::class, 'all_orders']);
 /**/
 Route::resource('purchase_orders', PurchaseOrderController::class);
 Route::get('purchase_items', [PurchaseOrderController::class, 'purchase_items']);
+Route::get('expense_views', [ExpenseController::class, 'index']);
 Route::get('purchase_order_costing', [PurchaseOrderController::class, 'purchase_order_costing']);
 Route::post('purchase_order_costing', [PurchaseOrderController::class, 'add_order_costing']);
 

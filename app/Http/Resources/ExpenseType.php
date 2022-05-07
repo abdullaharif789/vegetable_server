@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 use Carbon\Carbon;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class Expense extends JsonResource
+class ExpenseType extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -16,9 +16,8 @@ class Expense extends JsonResource
     {
         return [
             "id"=>$this->id,
-            'expense_type'=>$this->expense_type,
-            'amount'=>(float)$this->amount,
-            "date"=>Carbon::createFromFormat('Y-m-d H:i:s', $this->date)->setTimezone('Europe/London')->isoFormat('DD/MM/Y'),
+            'name'=>$this->name,
+            'default_amount'=>(float)$this->default_amount,
             "created_at"=>Carbon::createFromFormat('Y-m-d H:i:s', $this->created_at)->setTimezone('Europe/London')->isoFormat('DD/MM/Y'),
         ];
     }

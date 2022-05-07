@@ -5,22 +5,18 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Expense extends Model
+class ExpenseType extends Model
 {
     use HasFactory;
-    protected $table="expenses";
+    protected $table="expense_types";
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
     protected $fillable = [
-        'expense_type_id',
-        'amount',
-        'date'
+        'name',
+        'default_amount'
     ];
-    public function expense_type()
-    {
-        return $this->belongsTo(ExpenseType::class);
-    }
+
 }
