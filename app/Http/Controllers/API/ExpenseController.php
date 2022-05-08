@@ -95,14 +95,16 @@ class ExpenseController extends BaseController
     {
         $input = $request->all();
         $validator = Validator::make($input, [
-            'type' => 'required',
+            'expense_type_id' => 'required',
             'amount' => 'required|numeric',
         ]);
 
         if($validator->fails()){
             return $this->sendError('Validation Error.', $validator->errors());
         }
-        $expense->type=$input['type'];
+        $expense->expense_type_id=$input['expense_type_id'];
+        if(isset($input['extra']))
+            $expense->extra=$input['extra'];
         $expense->amount=$input['amount'];
         $expense->save();
         return $this->sendResponse(($expense), 'Expense updated successfully.');
