@@ -28,8 +28,10 @@ class ExpenseController extends BaseController
             if(isset($filter->expense_type)){
                 $expenses=$expenses->where('expense_type_id', $filter->expense_type);
             }
-            if(isset($filter->date)){
-                $expenses=$expenses->whereDate('date',$filter->date);
+            if(isset($filter->start_date) || isset($filter->end_date)){
+                $from=isset($filter->start_date)?date($filter->start_date):date('1990-01-01');
+                $to=isset($filter->end_date)?date($filter->end_date):date('2099-01-01');
+                $expenses=$expenses->whereDate('date','<=',$to)->whereDate('date','>=',$from);
             }
             $count=$expenses->get()->count();
         }
