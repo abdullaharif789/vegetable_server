@@ -5,6 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Carbon\Carbon;
 use App\Models\Transaction;
+use App\Models\User;
 use App\Http\Resources\ETransaction as TransactionResource;
 class PurchaseInvoice extends JsonResource
 {
@@ -21,7 +22,7 @@ class PurchaseInvoice extends JsonResource
         foreach ($transactions as $key => $value) {
             $transactions_total+=(float)$value->amount;
         }
-        
+        $email=User::where('id',$this->party->user_id)->first(['email'])->email;
         return[
             'id'=>$this->id,
             "party_id"=>$this->party_id,
@@ -30,6 +31,7 @@ class PurchaseInvoice extends JsonResource
                 'business_name'=>ucwords($this->party->business_name),
                 'address'=>ucwords($this->party->address),
                 'contact_number'=>$this->party->contact_number,
+                'email'=>$email
             ],
             "cart"=>json_decode($this->cart),
             "sr"=>$this->sr,
