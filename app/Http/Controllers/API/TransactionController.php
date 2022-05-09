@@ -39,6 +39,8 @@ class TransactionController extends BaseController
                 $transactions=$transactions->where('date',"like","%".$filter->date."%");
             if(isset($filter->party_id))
                 $transactions=$transactions->where('party_id',$filter->party_id);
+            if(isset($filter->purchase_invoice_id))
+                $transactions=$transactions->where('purchase_invoice_id',$filter->purchase_invoice_id);
             if(isset($filter->amount) && isset($filter->weeks)){
                 $transactions=$transactions->where('paid',0)->where(
                      function($query) use($filter) {
