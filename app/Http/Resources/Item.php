@@ -14,11 +14,15 @@ class Item extends JsonResource
      */
     public function toArray($request)
     {
+        $r_image="storage/items/r_".$this->image;
+        if(!file_exists($r_image)){
+            $r_image="storage/items/".$this->image;
+        }
         return [
             'id'=>$this->id,
             'name'=>ucwords($this->name),
             'image'=>strpos($this->image,"placeholder.com")?$this->image:asset("storage/items/".$this->image),
-            'r_image'=>strpos($this->image,"placeholder.com")?$this->image:asset("storage/items/r_".$this->image),
+            'r_image'=>strpos($this->image,"placeholder.com")?$this->image:asset($r_image),
             'category_id'=>$this->category->id,
             'tax'=>$this->tax?"yes":"no",
             'tax_boolean'=>$this->tax?true:false,

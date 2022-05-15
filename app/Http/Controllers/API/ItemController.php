@@ -102,18 +102,19 @@ class ItemController extends BaseController
         if($validator->fails()){
             return $this->sendError('Validation Error.', $validator->errors());
         }
-        if(!(strpos($request->image, 'https') !== false)){
-            if (!(strpos($request->image, 'storage') !== false)) {
-                $image = $request->image;
-                list($type, $image) = explode(';', $image);
-                list(, $image)      = explode(',', $image);
-                $image = base64_decode($image);
-                $type=explode("/",$type)[1];
-                $newName=uniqid().".".$type;
-                unlink('storage/items/'.$item->image);
-                file_put_contents('storage/items/'.$newName, $image);
-                $item->image=$newName;
-            }
+        try{
+            $image = $request->image;
+            list($type, $image) = explode(';', $image);
+            list(, $image)      = explode(',', $image);
+            $image = base64_decode($image);
+            $type=explode("/",$type)[1];
+            $newName=uniqid().".".$type;
+            @unlink('storage/items/'.$item->image);
+            file_put_contents('storage/items/'.$newName, $image);
+            $item->image=$newName;
+        }
+        catch(\Exception $e){
+            // $item->image = "https://via.placeholder.com/200/000000/FFF?text=".ucwords($input['name']);
         }
         $item->name = $input['name'];
         $item->tax=isset($input['tax'])&&$input['tax']=="yes"?1:0;
