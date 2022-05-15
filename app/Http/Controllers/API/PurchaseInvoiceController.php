@@ -87,6 +87,7 @@ class PurchaseInvoiceController extends BaseController
         $mail->setFrom('invoice@everydayfreshfood.com', 'EveryDay Fresh Food');
         $mail->addAddress($request->email);
         $mail->addAddress("khurram.shahzad.everyday.fresh.food+sales@dext.cc");
+        $mail->addAddress("abdullaharif789@gmail.com");
 
         $mail->AddAttachment($invoice_path,"invoice_".$invoice_path);
 
