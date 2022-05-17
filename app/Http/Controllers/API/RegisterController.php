@@ -70,7 +70,7 @@ class RegisterController extends BaseController
            return $this->sendError('Unauthorised.', ['error'=>'Unauthorised'],401);
         }
         else{
-            if(Auth::attempt(['email' => $request->email,'password' => $request->password])){
+            if(Auth::attempt(['email' => $request->email,'password' => Hash::make($request->password)])){
                 $user = Auth::user();
                 $token=$user->createToken('EveryDayFrehFood');
                 $success['token'] =  $token->accessToken;
@@ -115,7 +115,7 @@ class RegisterController extends BaseController
         if(count($token)>0)
             return $this->sendResponse(true,"");
         else
-            return $this->sendResponse(false,"");   
+            return $this->sendResponse(false,"");
     }
     public function loginadmin(Request $request)
     {
