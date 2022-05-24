@@ -24,8 +24,8 @@ class PurchaseReport extends JsonResource
             $totalQuantity+=$item->quantity;
             $item->cost_price=$item->cost_price?(float)$item->cost_price:0.00;
             $item->price=$item->price?(float)$item->price:0.00;
-            $item->profit=($item->price - $item->cost_price) * (int)$item->quantity;
-            $item->total_with_tax=number_format($item->quantity*$item->tax + $item->total, 2, '.', '');
+            $item->profit=($item->price - $item->cost_price) * (float)$item->quantity;
+            $item->total_with_tax=number_format((float)$item->quantity*$item->tax + $item->total, 2, '.', '');
             $totalProfit+=$item->profit;
             $item->profit=number_format((float)$item->profit, 2, '.', '');
             $item->cost_price=number_format($item->cost_price, 2, '.', '');
