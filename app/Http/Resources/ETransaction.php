@@ -21,6 +21,7 @@ class ETransaction extends JsonResource
             "party_id"=>$this->party_id,
             "party_name"=>$this->party?ucwords($this->party->business_name):null,
             "amount"=>number_format($this->amount, 2, '.', ','),
+            "f_amount"=>round($this->amount, 2),
             'paid_boolean'=>$this->paid?true:false,
             'paid'=>$this->paid?"Paid":"Unpaid",
             "purchase_invoice_id"=>$this->purchase_invoice_id,

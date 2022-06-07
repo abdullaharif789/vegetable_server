@@ -133,7 +133,7 @@ class TransactionController extends BaseController
         $input = $request->all();
         $validator = Validator::make($input, [
             'paid'=> 'required',
-            'amount'=> 'required',
+            'f_amount'=> 'required',
         ]);
         if($validator->fails()){
             return $this->sendError('Validation Error.', $validator->errors());
@@ -148,14 +148,15 @@ class TransactionController extends BaseController
         $transaction->paid=isset($input['paid']) && $input['paid'] == "Paid"?1:0;
         $transaction->custom_purchase_invoice_id=$custom_purchase_invoice_id;
         $totalAmount=$transaction->amount;
-        $givenAmount=$input['amount'];
+        $givenAmount=$input['f_amount'];
         if($givenAmount >= $totalAmount){
             $givenAmount = $totalAmount;
         }else{
             $input['paid']=1;
             $input['date']=$input['new_date'];
+            $input['amount']=$input['f_amount'];
             Transaction::create($input);
-            $givenAmount=$totalAmount-$givenAmount;
+            $givenAmount = $totalAmount - $givenAmount;
         }
         $transaction->amount=$givenAmount;
         $transaction->save();
