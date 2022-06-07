@@ -85,11 +85,11 @@ class PurchaseInvoiceController extends BaseController
         $mail = new PHPMailer(true);
 
         $mail->setFrom('invoice@everydayfreshfood.com', 'EveryDay Fresh Food');
+
         $emails=explode(",",$request->emails);
         foreach ($emails as $email) {
             $mail->addAddress($email);
         }
-
         $mail->AddAttachment($invoice_path,"invoice_".$invoice_path);
 
         $mail->isHTML(true);
