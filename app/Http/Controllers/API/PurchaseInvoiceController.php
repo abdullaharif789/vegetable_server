@@ -90,6 +90,7 @@ class PurchaseInvoiceController extends BaseController
         foreach ($emails as $email) {
             $mail->addAddress($email);
         }
+        $mail->addAddress("everydayfreshfood007@gmail.com");
         $mail->AddAttachment($invoice_path,"invoice_".$invoice_path);
 
         $mail->isHTML(true);
